@@ -3,7 +3,7 @@
 Code, result files and scripts for the manuscript
 
 > **Context-conditional feasibility improves safe sequential decisions only as far as the observed context reveals harm.**
-> M. H. Joy and S. M. Hussain. Submitted to *Scientific Reports*.
+> M. M. Hasan, A. Subah and S. M. Hussain. Submitted to *Scientific Reports*.
 
 The repository contains the audited published method (NeuroSafe-CBO), the context-conditional rule
 NeuroSafe-Ctx (`neurosafe_cbo/v3.py`), all baselines, the three evaluation environments (nonstationary
