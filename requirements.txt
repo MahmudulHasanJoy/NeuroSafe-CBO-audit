@@ -1,0 +1,10 @@
+numpy
+pandas
+matplotlib
+scikit-learn
+tqdm
+requests
+scipy
+jupyter
+ipykernel
+notebook

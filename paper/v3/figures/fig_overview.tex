@@ -1,0 +1,46 @@
+% Figure 1: study overview. Requires \usepackage{tikz} and
+% \usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc}.
+\begin{tikzpicture}[
+  font=\sffamily\scriptsize, node distance=3mm and 6mm, >={Stealth[length=2mm]},
+  dom/.style={draw=#1, fill=#1!8, rounded corners=2pt, text width=3.9cm, align=flush left, inner sep=3pt, line width=0.6pt},
+  stp/.style={draw=black!70, fill=white, rounded corners=2pt, text width=4.5cm, align=flush left, inner sep=3pt},
+  ev/.style={draw=black!55, fill=black!4, rounded corners=2pt, text width=4.3cm, align=flush left, inner sep=3pt},
+  hdr/.style={font=\sffamily\scriptsize\bfseries, align=center},
+  lab/.style={font=\sffamily\tiny, fill=white, inner sep=1pt},
+  flow/.style={->, line width=0.6pt, draw=black!70}]
+% ---------- column 1: domains (the environment)
+\node[dom=blue!70!black] (scm) {\textbf{Nonstationary SCM} (synthetic)\\ Harm rides the context channel; the feasible set shifts mid-horizon.};
+\node[dom=orange!80!black, below=of scm] (lend) {\textbf{Lending} (German Credit)\\ 1{,}000 real default outcomes, monotone default model, decline action.};
+\node[dom=teal!80!black, below=of lend] (ihdp) {\textbf{IHDP} (real covariates)\\ Adverse-event channel that binds for the riskiest 30\% of infants.};
+\begin{scope}[on background layer]
+\node[draw=black!40, dashed, rounded corners=3pt, fit=(scm)(lend)(ihdp), inner sep=2.5mm] (env) {};
+\end{scope}
+\node[hdr, above=0.5mm of env] {Three evaluation domains (environment)};
+% ---------- column 2: the decision rule
+\node[stp, right=17mm of scm.north east, anchor=north west] (kf) {\textbf{1\quad Context filter}\\ A Kalman filter turns the noisy observation $o_t$ into an estimate $\hat z_t$.};
+\node[stp, below=of kf] (glm) {\textbf{2\quad Feasibility as a probability}\\ Bayesian logistic model of $\mathbf 1\{H>\tau\}$; action $a$ is certified if its upper bound is $\le\alpha$, giving the set $\mathcal C_t$.};
+\node[stp, below=of glm] (ucb) {\textbf{3\quad Utility and decision}\\ Context-bucket UCB; play the best $a\in\mathcal C_t$, or the least-risky action if $\mathcal C_t$ is empty.};
+\begin{scope}[on background layer]
+\node[draw=black!40, dashed, rounded corners=3pt, fit=(kf)(glm)(ucb), inner sep=2.5mm] (agent) {};
+\end{scope}
+\node[hdr, above=0.5mm of agent] {NeuroSafe-Ctx, every round $t$};
+\draw[flow] (kf) -- (glm); \draw[flow] (glm) -- (ucb);
+\draw[flow] (env.east |- kf.west) -- node[lab, above=1pt] {context $o_t$} (agent.west |- kf.west);
+\draw[flow] (agent.west |- ucb.west) -- node[lab, below=1pt] {action $a_t$} (env.east |- ucb.west);
+\draw[flow, dashed] (env.south) -- ++(0,-4mm) -| node[lab, pos=0.25, below=1pt] {feedback $(U_t,H_t)$ updates both models} (agent.south);
+% ---------- column 3: evaluation
+\node[ev, right=14mm of kf.north east, anchor=north west] (sweep) {\textbf{Frontier sweeps}\\ Each method's own safety knob is swept; return against violation (Fig.~2).};
+\node[ev, below=of sweep] (match) {\textbf{Matched paired tests}\\ Operating points fixed on tuning seeds 0--9, tested on held-out seeds 100--149.};
+\node[ev, below=of match] (abl) {\textbf{Ablations and baselines}\\ Remove context, GLM, buckets or filter; compare with Chance, SafeOpt, safe GP-UCB and an oracle.};
+\begin{scope}[on background layer]
+\node[draw=black!40, dashed, rounded corners=3pt, fit=(sweep)(match)(abl), inner sep=2.5mm] (evalbox) {};
+\end{scope}
+\node[hdr, above=0.5mm of evalbox] {Evaluation protocol};
+\draw[flow] (agent.east |- glm.east) -- node[lab, above=1pt] {50 seeds} (evalbox.west |- glm.east);
+% ---------- bottom band: theory and clinical audit
+\coordinate (bandtop) at ($(env.south west)+(0,-11mm)$);
+\node[ev, fill=yellow!10, draw=yellow!50!black, text width=7.6cm, anchor=north west] (thm) at (bandtop)
+  {\textbf{Information floor (Theorem 1).} For every policy, $\mathbb E R_n+2\Delta\,\mathbb E V_n\ge\Delta n\arccos(\rho)/\pi$: what the context channel cannot reveal, no learner can recover.};
+\node[ev, fill=red!6, draw=red!50!black, text width=7.6cm, anchor=north east] (mimic) at (bandtop -| evalbox.east)
+  {\textbf{MIMIC-IV vasopressor dosing (audited).} A pre-registered gate requires $\ge0.5$\,mmHg headroom over clinicians; the best possible is $0.34$\,mmHg, so no method comparison is run. Off-policy evaluation on real held-out stays confirms.};
+\end{tikzpicture}

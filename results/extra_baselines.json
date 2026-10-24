@@ -1,0 +1,30 @@
+{
+  "lending": {
+    "ret": {
+      "CVaR": 0.8765,
+      "Chance": 0.2918,
+      "Random": 0.4977,
+      "RiskNeutral": 0.8765
+    },
+    "viol": {
+      "CVaR": 0.9717,
+      "Chance": 0.3703,
+      "Random": 0.6782,
+      "RiskNeutral": 0.9717
+    }
+  },
+  "mimic": {
+    "ret": {
+      "CVaR": 4.5724,
+      "Chance": 3.2421,
+      "Random": 2.5164,
+      "RiskNeutral": 4.5724
+    },
+    "viol": {
+      "CVaR": 0.0093,
+      "Chance": 0.0631,
+      "Random": 0.1292,
+      "RiskNeutral": 0.0093
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "a_identity_all_cases": true,
+  "b_sheppard_max_abs_err": 0.0013854565424185616,
+  "c_any_policy_below_floor": false,
+  "d_ar1": {
+    "kalman_bayes": {
+      "mistakes": 0.17633333333333334,
+      "floor": 0.1749652421880391
+    },
+    "raw_obs": {
+      "mistakes": 0.19773333333333334,
+      "floor": 0.1749652421880391
+    },
+    "stale": {
+      "mistakes": 0.2922,
+      "floor": 0.1749652421880391
+    }
+  },
+  "d_ok": true
+}

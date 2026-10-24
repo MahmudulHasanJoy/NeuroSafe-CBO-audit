@@ -1,0 +1,14 @@
+\begin{tabular}{lccc}
+\toprule
+Model (grouped 5-fold CV on the fit half unless stated) & log-loss & AUC & $R^2$ \\
+\midrule
+harm: gradient boosting (original) & 0.08227 & 0.622 & -- \\
+harm: gradient boosting (regularised) & 0.08154 & 0.640 & -- \\
+harm: logistic regression (chosen) & 0.08138 & 0.643 & -- \\
+MAP: gradient boosting (original) (chosen) & -- & -- & 0.287 \\
+MAP: gradient boosting (regularised) & -- & -- & 0.285 \\
+MAP: ridge regression & -- & -- & 0.276 \\
+original models, in-sample & -- & 0.806 & 0.337 \\
+chosen models, held-out stays & -- & 0.632 & 0.266 \\
+\bottomrule
+\end{tabular}

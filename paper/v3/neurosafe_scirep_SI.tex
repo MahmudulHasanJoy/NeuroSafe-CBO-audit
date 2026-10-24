@@ -1,0 +1,107 @@
+% Supplementary Information for the Scientific Reports manuscript. Build: pdflatex neurosafe_scirep_SI.tex
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx,url}
+\usepackage[hidelinks]{hyperref}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\figurename}{Supplementary Figure}
+\renewcommand{\tablename}{Supplementary Table}
+\setlength{\parskip}{3pt}
+\title{\large\bfseries Supplementary Information for\\[3pt]
+Context-conditional feasibility improves safe sequential decisions only as far as the observed context reveals harm}
+\author{Mahmudul Hasan Joy and Syed Mehedi Hussain}
+\date{}
+\begin{document}
+\maketitle
+
+\section*{Supplementary Note 1: Reproducing every result}
+{\sloppy Use Python 3.11.9 with the package versions in \texttt{requirements-lock.txt}. Install
+\texttt{safeopt==0.16} and copy \texttt{patched\_safeopt/*.py} over the installed package, as its README
+describes; the patch consists of 15 compatibility lines (\texttt{collections}$\to$\texttt{collections.abc}
+for Python $\ge$3.10, and \texttt{np.float}/\texttt{np.bool}$\to$\texttt{float}/\texttt{bool} for NumPy
+$\ge$1.24) and no other change, which \texttt{experiments/diff\_safeopt.py} verifies. Run from the
+repository root, in order:\par}
+{\footnotesize
+\begin{verbatim}
+python experiments/run_v3.py frontier --domain scm --seeds 100:150 \
+    --agents "NeuroSafe-Ctx,Chance,SafeGP,Conservative"     # also lending, ihdp
+python experiments/regen_domain.py scm       # tuning seeds, defaults, ablations; also ihdp
+python experiments/regen_lending.py          # the same for lending
+python experiments/run_safeopt_ref.py --domain scm           # also lending, ihdp
+python experiments/run_ablation2.py
+python experiments/swap_ihdp_ablation.py
+python experiments/analyze_v3.py scm         # each domain
+python experiments/channel_ceiling.py
+python experiments/verify_theorem.py
+python experiments/verify_floor.py
+python experiments/figures_v3.py
+python experiments/make_fig_domains.py
+python experiments/make_tables_v3.py
+python experiments/make_posthoc_betacell.py
+python experiments/mimic_audit.py            # requires credentialed MIMIC-IV access
+python experiments/make_mimic_tables.py
+\end{verbatim}}
+Tuning uses seeds 0--9 and evaluation seeds 100--149; the two sets do not overlap. The lending
+environment's fitted default model is fingerprinted by \texttt{experiments/lending\_fingerprint.py}
+(prediction hash \texttt{ebe8497b2903d8e0} in the reported environment).
+
+\section*{Supplementary Note 2: Cross-environment comparison}
+Every result was regenerated in the recorded environment and compared, row by row, with an earlier run
+in a different environment (\texttt{experiments/check\_all.py}, \texttt{compare\_lending\_envs.py}). On
+the SCM and IHDP every baseline, including reference SafeOpt (240 of 240 rows per domain), reproduced
+exactly; NeuroSafe-Ctx and its ablation variants showed floating-point drift (largest per-setting mean
+shift $0.004$), and no matched operating point or CI-based conclusion changed. On lending the input data
+were identical but the fitted monotone default model differed. Of 42 lending conclusions, 4 changed
+category: Chance at $\alpha=0.35$ ($\Delta V$ $-0.021\to-0.017$), reference SafeOpt at $\beta=2$
+($\Delta R$ $-0.030\to-0.021$), and the no-context ($\Delta R$ $-0.028\to-0.019$) and no-filter
+($\Delta R$ $-0.001\to-0.000$) ablations at $\alpha=0.15$. All four moved from a CI excluding zero to
+one including it; none reversed sign. Frontier-level conclusions were unchanged.
+
+\begin{table}[h]
+\caption{\textbf{Paired tests at operating points matched on tuning seeds, nonstationary SCM} (50
+held-out seeds). Bold: 95\% bootstrap CI excludes zero. Chance's frontier is flat for
+$\alpha\le0.05$, so its first two rows coincide.}
+\centering\small
+\resizebox{\linewidth}{!}{\input{tables/matched_scm.tex}}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{Paired tests at matched operating points, lending with real default labels} (50
+held-out seeds). Bold: 95\% bootstrap CI excludes zero.}
+\centering\small
+\resizebox{\linewidth}{!}{\input{tables/matched_lending.tex}}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{IHDP, GLM versus a calibrated Beta--Bernoulli cell model} (full method minus variant,
+50 held-out seeds). Top: the same-$\alpha$ comparison specified before the run. Bottom: post hoc, at
+matched violation. Bold: CI excludes zero.}
+\centering\small
+\resizebox{\linewidth}{!}{\input{tables/posthoc_betacell.tex}}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{MIMIC-IV simulator validation.} Model choice uses grouped 5-fold cross-validation on
+the fit half (stays never split across folds); the last row evaluates the chosen models on held-out
+stays. The original in-sample figures are shown for comparison and are not valid estimates.}
+\centering\small
+\resizebox{\linewidth}{!}{\input{tables/mimic_validation.tex}}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{MIMIC-IV exploratory harm finding:} arrhythmia rate, policy minus clinicians, across
+softening $\varepsilon$ and importance-weight cap. Intervals resample stays (2,000 replicates).}
+\centering\small
+\input{tables/mimic_sensitivity.tex}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\linewidth]{figures/fig_floor.pdf}
+\caption{\textbf{The floor of Corollary~1 and simulated policies} on the Gaussian threshold instance.}
+\end{figure}
+\end{document}

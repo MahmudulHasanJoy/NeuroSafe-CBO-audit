@@ -1,0 +1,129 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+.env
+.env.*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# LaTeX build
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Scratch / local-only
+q1_out/
+q1_out_clean/
+q1_out_fast/
+_nb_extract/
+paper_pages/
+_agent_live.py
+_models_live.py
+_fetch_paper.py
+*.zip
+
+# Keep Overleaf zip out of root clutter (folder is enough)
+paper/main_track/neurips2026.zip
+paper/main_track/neurips_kit/
+
+# MIMIC-IV: PhysioNet-restricted, not redistributable — each user credentials
+# and downloads their own copy into data/mimic_iv/raw/ (see README)
+data/mimic_iv/raw/
+data/mimic_iv/prepped.csv.gz
+
+# Superseded/raw per-step experiment logs (Week 1/7-8 story) — large, regenerable
+# by rerunning the corresponding experiments/*.py script; kept on disk for
+# history but not tracked. Current paper evidence lives in results/margin_check,
+# results/lending_eval, results/mimic_eval, results/mimic_tau_*,
+# results/ihdp_ctx_eval, results/scm_ctx_eval_fresh, results/extra_baselines.json.
+results/main_track/
+results/day7/
+results/day7_dual/
+results/day7_dual2/
+results/day7_dual_anchor/
+results/day7_publish/
+results/day7_tradeoff_smoke/
+results/day7_tuned/
+results/diag/
+results/ctx_eval/
+results/mimic_smoke/
+
+# ---- NeuroSafe-CBO publication rules ----
+# Environments and caches
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+# MIMIC-IV: patient-level data and anything derived from it must never be published (PhysioNet DUA).
+# Only the aggregate audit (results/v3/mimic/audit.json) is released.
+results/mimic_*
+*.pkl
+*.pickle
+*.parquet
+_archive_20261024/
+results/tmp/
+# LaTeX build files
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.toc
+# Local backups
+paper/v3/*_before_edit.tex
+*.bak
+*.bak_*
+
+
+# ---- internal notes and earlier drafts (not part of the public release) ----
+paper/*.md
+paper/*.py
+paper/aaai/
+paper/ieee/
+paper/main_track/
+paper/supplement/
+paper/v3/neurips_2026.sty
+paper/v3/neurosafe_v3.tex
+paper/v3/tables_backup_20261024/
+RATING_TRAJECTORY.md
+REVISION_V3.md
+START_HERE.md
+UNATTENDED_README.md
+PROOF_CHECK.md
+RUN_UNATTENDED*.ps1
+SETUP_NEW_LAPTOP.ps1
+run_on_your_machine.*
+diag_policy.py
+patch_cache.py
+patch_fluid.py
+README_REPO.md
+README_original.md
+LICENSE_MIT.txt
+gitignore_neurosafe.txt
+publish_github.ps1
+paper/v3/*.pdf
+legacy/
+verify_*.txt
+CONTRIBUTION.md
