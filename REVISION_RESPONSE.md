@@ -18,7 +18,7 @@ Status key: **DONE** = changed in this revision · **RUN** = needs an experiment
 | 5b | Conservative bandit ignores harm | Relabelled as a reference for a different safety notion, not a competitor. | DONE |
 | 5c | Contextual SafeOpt unexplained | Described from the code: the package's own contextual mode, a kernel over action and context, the context held fixed, and safe seed a=0. It was already contextual; only the description was missing. | DONE |
 | 5d | Missing baselines | Safe UCB-GLM (Amani et al. design) added. SCM: ours earns more and violates less at every α≥0.05, frontier 5/5 above. IHDP: frontier 2/2 above; at equal α the two trade off. Table S10. | DONE |
-| 5e | Tuning budgets 18 vs 6 | `experiments/safeopt_equal_budget.py` re-tunes SafeOpt over 18 configurations. | RUN (authors' machine) |
+| 5e | Tuning budgets 18 vs 6 | SafeOpt re-tuned over 18 configurations: no conclusion changes. IHDP frontier 4/4 above (gaps +1.20 to +2.05); SCM 2/2 (+0.27, +0.47); lending selects the same configuration. | DONE |
 | 6 | Violates own constraint at small α | Calibrated range now stated: violation ≤ α for every α≥0.075 in all three domains; below that the method is a cautious default. | DONE |
 | 6+ | — | Decomposition (Table S9). SCM: 91% of the excess is the 10 random warm-up rounds, and a safe-warm-up variant meets every budget with higher return. IHDP: the safest action itself violates at 0.021, so α≤0.02 leaves no room to learn. The frozen method is kept for all comparisons. | DONE |
 | 7 | Scale | Scoped in Limitations. | DONE |
@@ -45,3 +45,5 @@ Status key: **DONE** = changed in this revision · **RUN** = needs an experiment
 **Small-α violations.** We located the cause. On the SCM, the excess comes almost entirely from ten random warm-up rounds; a variant that warms up with the safest action meets every budget and earns more. On IHDP the safest action itself violates at 2.1%, so a 2% budget leaves no room to learn anything. We keep the method frozen for all comparisons, report the variant as a diagnostic, and claim calibration only for α≥0.075.
 
 **Closest prior method.** We added Safe UCB-GLM following Amani et al. (2020). On the SCM our method earns more and violates less at every α≥0.05, and on IHDP its frontier is higher at every comparable point. The design choices we describe as engineering therefore matter empirically, although we claim no algorithmic novelty.
+
+**Tuning budgets.** We re-tuned reference SafeOpt over 18 configurations, the same budget as our method. No conclusion changes: our frontier stays above it at every comparable IHDP point (by 1.20–2.05) and SCM point (0.27–0.47), and on lending the larger grid selects the original configuration, so SafeOpt remains at least as good as our method there.

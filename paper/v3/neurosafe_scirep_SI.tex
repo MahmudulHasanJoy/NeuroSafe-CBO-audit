@@ -147,7 +147,15 @@ advance: $\ge0.80$, $\ge0.10$ and $\ge0.5$\,mmHg.}
 increased so that the correlation $\rho$ between the observed context and the risk signal that drives
 harm takes the listed values (empirical correlations $0.951$, $0.903$, $0.709$, $0.515$ and $0.319$ for
 the targets $0.95$, $0.9$, $0.7$, $0.5$ and $0.3$); all other settings, seeds 100--149 and agents are as in
-the main results. \textbf{Small-$\alpha$ decomposition} (\texttt{experiments/small\_alpha\_check.py}).
+the main results. \textbf{Equal tuning budget for reference SafeOpt} (\texttt{experiments/safeopt\_equal\_budget.py}).
+The grid is widened from 6 to 18 configurations (action lengthscale $\{0.1,0.2,0.4\}$ $\times$ utility
+noise $\{0.1,0.5\}$ $\times$ context lengthscale $\{0.5,1,2\}$) with the same selection rule. Selected:
+$(0.4,0.5,0.5)$ on IHDP, $(0.4,0.1,2)$ on the SCM and $(0.4,0.1,1)$ on lending, the last identical to the
+original choice. On IHDP the re-tuned SafeOpt earns slightly more (e.g. $3.11$ against $3.00$ at
+$\beta=2$), but NeuroSafe-Ctx's frontier remains above it at 4 of 4 comparable points (gaps $+1.20$ to
+$+2.05$, against $+1.52$ to $+2.13$ with 6 configurations); on the SCM at 2 of 2 (gaps $+0.27$ and
+$+0.47$, against $+0.19$ and $+0.45$); on lending results are unchanged (0 of 1, gap $-0.017$).
+\textbf{Small-$\alpha$ decomposition} (\texttt{experiments/small\_alpha\_check.py}).
 Violation is split between the ten warm-up rounds and the rest, and compared with always playing the safest
 action, the context-seeing oracle (IHDP) and a variant whose warm-up plays the safest action.
 

@@ -632,9 +632,7 @@ environments.
 \subsection*{Statistical multiplicity and tuning budgets}
 We report more than 100 confidence intervals without adjustment, so a few of them will exclude zero by
 chance; we have therefore based conclusions on frontier-level patterns that hold across many operating
-points. Tuning budgets were not equal: our method was tuned over 18 configurations, reference SafeOpt over 6 and Safe UCB-GLM over 9, which favours our method in any comparison where it wins narrowly. The IHDP gains over
-SafeOpt are large enough that this asymmetry cannot explain them, but the narrow SCM gains could be
-affected.
+points. Our method was tuned over 18 configurations, reference SafeOpt originally over 6 and Safe UCB-GLM over 9. Re-tuning reference SafeOpt over 18 configurations, the same budget as ours, changes no conclusion: our frontier stays above it at all four comparable IHDP points (by $1.20$--$2.05$, against $1.52$--$2.13$ before) and both SCM points ($0.27$--$0.47$), and on lending the larger grid selects the same configuration (Supplementary Note~5).
 
 \subsection*{How safety is achieved at small budgets}
 At small $\alpha$ our method's safety comes largely from its fallback to the least-risky action (78--94\% of IHDP decisions at $\alpha\le0.05$), not from active optimisation. Its realised violation stays at or below the nominal level for every $\alpha\ge0.075$ in all three domains, but not below that. A decomposition added in revision locates the excess (Supplementary Table~S9). On the SCM it comes almost entirely from the ten random warm-up rounds ($0.027$ of $0.029$ at $\alpha=0.02$); a variant whose warm-up plays the safest action stays within budget at every $\alpha$ tested and also earns more ($1.75$ against $1.37$ at $\alpha=0.05$). On IHDP the safest action, no treatment, itself violates at $0.021$, so $\alpha\le0.02$ leaves no room to learn; the same variant meets the budget for $\alpha\ge0.03$ but earns much less ($2.39$ against $3.48$ at $\alpha=0.05$) because it rarely tries treatment. Every reported comparison uses the method as frozen on tuning seeds, and we claim calibrated behaviour only for $\alpha\ge0.075$.
