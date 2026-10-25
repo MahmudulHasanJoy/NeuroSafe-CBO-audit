@@ -20,8 +20,7 @@
 \renewcommand{\figurename}{Figure}
 % ---- Items still to confirm before submission (shown in red). When an item is confirmed, edit it in
 % place; when none remain, change the two lines below to  \newcommand{\verify}[1]{#1}  and
-% \newcommand{\chk}{} . \chk marks an equation whose exact form must be checked against
-% neurosafe_cbo/v3.py; \verify marks text the authors must supply or confirm.
+% % neurosafe_cbo/v3.py; \verify marks text the authors must supply or confirm.
 \newcommand{\verify}[1]{\textcolor{red}{#1$^{\dagger}$}}
 \newcommand{\chk}{\textcolor{red}{$^{\dagger}$}}
 \newcommand{\coderepo}{\url{https://github.com/MahmudulHasanJoy/NeuroSafe-CBO}}
@@ -131,8 +130,7 @@ work applied the approach to robot controller tuning~\cite{berkenkamp2023}. Thes
 Gaussian-process bandit optimisation~\cite{srinivas2010,rasmussen2006}. They treat safety as a
 deterministic function bound rather than a probability, and in their standard form they do not
 condition the safe set on an observed context, which is the property our analysis shows to matter.
-We therefore use the reference \texttt{safeopt} implementation as a baseline, run contextually, and
-also our own safe GP-UCB reimplementation in the same style.
+
 
 \subsection*{Safe, conservative and constrained bandits}
 Conservative bandits require cumulative reward to stay above a fraction of a baseline policy's
@@ -156,15 +154,12 @@ channel follows from Sheppard's formula~\cite{sheppard1899}. Bandits with noisy 
 \subsection*{Benchmarks, reproducibility and clinical evaluation}
 Semi-synthetic benchmarks such as IHDP combine real covariates with simulated outcomes so that
 counterfactuals are known~\cite{hill2011,shalit2017,dorie2019}; credit data such as the German Credit
-dataset~\cite{hofmann1994} supply real default labels. Concerns about reproducibility in machine
-learning~\cite{henderson2018,pineau2021,gundersen2018} apply with particular force when effects are
-small. Clinical decision learning from MIMIC~\cite{johnson2023mimic,goldberger2000} has produced
+dataset~\cite{hofmann1994} supply real default labels.  Clinical decision learning from MIMIC~\cite{johnson2023mimic,goldberger2000} has produced
 influential results~\cite{komorowski2018} and equally influential cautions~\cite{gottesman2019}, chief
 among them that off-policy estimates must be checked for effective sample size and robustness.
 Our MIMIC-IV audit uses weighted importance sampling~\cite{precup2000}, doubly robust
 estimation~\cite{dudik2011,jiang2016}, effective sample size~\cite{kong1992} and the guidance of
-high-confidence off-policy evaluation~\cite{thomas2015hcope,thomas2016}. Sepsis is defined by
-diagnosis codes, not by clinical criteria such as Sepsis-3~\cite{singer2016}.
+high-confidence off-policy evaluation~\cite{thomas2015hcope,thomas2016}. 
 
 \section*{Problem setting}
 
@@ -227,12 +222,7 @@ with equality for the Bayes rule that plays $a_1$ if and only if $o_t\le0$.
 
 \subsection*{Consequences and scope}
 The floor is linear in $n$, so no policy has both sublinear regret and sublinear violations; a policy
-with $\mathbb E V_n\le vn$ has $\mathbb E R_n\ge\Delta n(\arccos(\rho)/\pi-2v)$. Writing the posterior
-standard deviation as $\varepsilon=\sigma_c\sqrt{1-\rho^2}$ gives
-$\arccos(\rho)/\pi=\arctan(\varepsilon/\sigma_c\rho)/\pi\approx\varepsilon/(\pi\sigma_c)$: the floor is
-linear in the filter's error, so on this class an $n\,\varepsilon$ term is unavoidable for every algorithm rather than an artefact of a particular analysis. The proof is elementary---the pathwise identity reduces the weighted cost to a count of classification mistakes---and what we claim is the framing and the attained constant, not technical depth. As an illustration only---our structural causal model is not a threshold instance and its
-contexts are autocorrelated---a channel with $\rho=0.93$, as measured in the Results, would impose a
-floor of $0.12$ mistakes per round on a threshold instance. Corollary~\ref{cor:gauss} needs independent
+with $\mathbb E V_n\le vn$ has $\mathbb E R_n\ge\Delta n(\arccos(\rho)/\pi-2v)$.  The proof is elementary---the pathwise identity reduces the weighted cost to a count of classification mistakes---and what we claim is the framing and the attained constant, not technical depth.  Corollary~\ref{cor:gauss} needs independent
 contexts so that feedback carries no information about $c_t$; with autocorrelated contexts
 Theorem~\ref{thm:floor} still holds, but past feedback can lower the Bayes error below the
 observation-only value. The bound is tight over all policies; policies that also enforce a
@@ -270,7 +260,7 @@ $P_t^-=\phi^2P_{t-1}+q$, $K_t=P_t^-/(P_t^-+r)$, $m_t=m_t^-+K_t(o_t-m_t^-)$ and $
 with $\hat z_t=m_t$ standardised online. The parameters are estimated online by the method of moments
 from the empirical autocovariances $\hat\gamma(k)$ of $o_t$:
 $\hat\phi=\hat\gamma(2)/\hat\gamma(1)$, stationary latent variance $\hat s^2=\hat\gamma(1)/\hat\phi$,
-$\hat q=(1-\hat\phi^2)\hat s^2$ and $\hat r=\hat\gamma(0)-\hat s^2$\chk. If the lag-1
+$\hat q=(1-\hat\phi^2)\hat s^2$ and $\hat r=\hat\gamma(0)-\hat s^2$, computed on the last 400 observations and refitted every 25 rounds ($\hat\phi$ is clipped to $[0.05,0.99]$ and falls back to $\hat\gamma(1)/\hat\gamma(0)$ when $\hat\gamma(2)\le0$). If the lag-1
 autocorrelation is below $0.2$ the filter is the identity, $\hat z_t=o_t$, because an autoregressive
 latent is not identifiable from data that are close to independent.
 
@@ -285,8 +275,7 @@ where $\varsigma$ is the logistic function. With forgetting factor $\gamma=0.995
 $\theta\sim\mathcal N(0,4I)$, the posterior mode $\hat\theta_t$ maximises
 $\sum_{s\le t}\gamma^{t-s}\ell_s(\theta)-\|\theta\|^2/8$, where $\ell_s$ is the Bernoulli
 log-likelihood of observation $s$, and a full-covariance Laplace approximation gives
-$\Sigma_t=\big(\sum_{s\le t}\gamma^{t-s}\varsigma'(\hat\theta_t^\top\varphi_s)\varphi_s\varphi_s^\top+I/4\big)^{-1}$\chk,
-refitted each round by warm-started Newton steps. An action is certified at round $t$ if its upper
+$\Sigma_t=\big(\sum_{s\le t}\gamma^{t-s}\varsigma'(\hat\theta_t^\top\varphi_s)\varphi_s\varphi_s^\top+I/4\big)^{-1}$, refitted each round by three warm-started Newton steps. An action is certified at round $t$ if its upper
 confidence bound on the harm probability is within the budget,
 \begin{equation}
 \mathcal C_t=\Big\{a\in\mathcal A:\ \varsigma\big(\hat\theta_t^\top\varphi(a,\hat z_t)+\beta_h\|\varphi(a,\hat z_t)\|_{\Sigma_t}\big)\le\alpha\Big\},
@@ -304,7 +293,7 @@ $\hat\mu_t(b,a)$ towards the pooled per-action mean $\bar\mu_t(a)$,
 \label{eq:shrink}
 \end{equation}
 where $n_t(b,a)$ counts past plays of $a$ in bucket $b$, and the optimistic index is
-$\mathrm{UCB}_t(a)=\tilde\mu_t(b(\hat z_t),a)+\beta_u/\sqrt{1+n_t(b(\hat z_t),a)}$\chk. An earlier
+$\mathrm{UCB}_t(a)=\tilde\mu_t(b(\hat z_t),a)+\beta_u\hat\sigma_U/\sqrt{n_t(b(\hat z_t),a)+3}$, where $\hat\sigma_U=\max\{\mathrm{sd}(U_{1:t}),0.05\}$ is the spread of all utilities observed so far; until 16 utilities have been observed a single bucket is used. An earlier
 implementation used fixed bucket edges tuned to the synthetic domain, which collapsed all real-domain
 contexts into one bucket.
 
@@ -315,8 +304,7 @@ a_t=\begin{cases}\arg\max_{a\in\mathcal C_t}\mathrm{UCB}_t(a) & \text{if }\mathc
 \arg\min_{a\in\mathcal A}\varsigma\big(\hat\theta_t^\top\varphi(a,\hat z_t)+\beta_h\|\varphi(a,\hat z_t)\|_{\Sigma_t}\big) & \text{otherwise},\end{cases}
 \label{eq:rule}
 \end{equation}
-that is, the most promising certified action, or the action with the lowest certified harm when none
-is certified. The settings were frozen on tuning seeds: the cubic basis (higher tuning-seed return
+that is, the most promising certified action, or the action with the lowest certified harm when none is certified. The first 10 rounds are a warm-up in which actions are drawn uniformly at random. The settings were frozen on tuning seeds: the cubic basis (higher tuning-seed return
 than the quadratic basis in all 18 tuning cells, at similar violation), $\beta_u=0.5$, and
 $\beta_h=1$, the middle value of the grid. Because $\beta_h$ trades return for violation in the same
 direction as $\alpha$, we fix it and sweep $\alpha$.
@@ -325,7 +313,7 @@ direction as $\alpha$, we fix it and sweep $\alpha$.
 
 \begin{figure}[t]
 \centering
-\resizebox{\linewidth}{!}{\input{figures/fig_overview.tex}}
+\resizebox{0.92\linewidth}{!}{\input{figures/fig_overview.tex}}
 \caption{\textbf{Overview of the study.} Three evaluation domains (left) emit a noisy context; at
 every round NeuroSafe-Ctx filters it, certifies actions whose upper bound on the harm probability is
 within the budget, and plays the most promising certified action or, if none is certified, the
@@ -343,7 +331,7 @@ with the fixes described in the Results: the agent chooses a loan size or declin
 default probability of a monotone gradient-boosted model fitted to 1,000 real outcomes; utility is
 loan size; the agent sees a noisy one-dimensional summary of the applicant ($\tau=0.25$). (iii)
 IHDP~\cite{hill2011}: real covariates and fitted response surfaces, with an explicit adverse-event
-channel that binds for the riskiest 30\% of infants, replacing an inert rank-based harm ($\tau=0.5$). This harm channel is constructed, because IHDP records no adverse events, and context matters in it by design, so we treat IHDP as a test of the mechanism rather than of real-world benefit. \verify{State the IHDP outcome realisation(s) used (e.g. NPCI setting A, realisation index) and how they map to seeds.}
+channel that binds for the riskiest 30\% of infants, replacing an inert rank-based harm ($\tau=0.5$). This harm channel is constructed, because IHDP records no adverse events, and context matters in it by design, so we treat IHDP as a test of the mechanism rather than of real-world benefit. Response surfaces are fitted on the training split of the first realisation of the 100-realisation IHDP benchmark of Shalit et al.~\cite{shalit2017}, and each round draws an infant uniformly from the 75 infants of that realisation's test split; seeds vary the draws and noise, not the realisation.
 A fourth, clinical domain built from MIMIC-IV is audited separately, as described below.
 
 \subsection*{Baselines}
@@ -351,10 +339,10 @@ Chance is a context-blind chance-constrained rule that plays
 $\arg\max_{a:\hat p(a)\le\alpha}\{\hat\mu_U(a)+\beta\hat\sigma_U(a)\}$, which is equation~(\ref{eq:obj})
 under its own estimates. Reference SafeOpt~\cite{sui2015safeopt} is run contextually through the
 \texttt{safeopt} package (version 0.16, with 15 lines of compatibility fixes for Python $\ge$3.10 and
-NumPy $\ge$1.24 and no algorithmic change), with $a=0$ as its safe seed; \verify{state how the context enters (kernel over action and context, context handling during acquisition), from neurosafe\_cbo/safeopt\_ref.py}. Safe GP-UCB is our own
+NumPy $\ge$1.24 and no algorithmic change), with $a=0$ as its safe seed; it uses the package's contextual mode, in which separate Gaussian processes model utility and $-H$ with a squared-exponential kernel over action and context (automatic relevance determination), the context (scaled by its standard deviation on a separate environment seed) is held fixed during acquisition, an action is safe if its upper confidence bound on harm is at most $\tau$, and the safe seed is played when no action is safe in the current context; its action lengthscale and utility noise were tuned over $3\times2$ values on the tuning seeds. Safe GP-UCB is our own
 reimplementation in the same style~\cite{sui2015safeopt,sui2018stageopt}; it certifies actions whose
 Gaussian-process upper bound on harm is at most $\tau$ and plays GP-UCB utility among them. It explores
-more aggressively than reference SafeOpt and the two are not equivalent, so we report both. We also
+more aggressively than reference SafeOpt and the two are not equivalent, so we report both. Safe UCB-GLM, added in revision, follows the design of Amani et al.~\cite{amani2020glm}: a ridge-regularised logistic model of the harm event with frequentist confidence sets from the design matrix, a ridge-regression UCB for utility, the raw context and no forgetting, on the same features, warm-up and $\alpha$ grid as our method, with its two confidence multipliers tuned over nine values on the tuning seeds. We also
 include a conservative linear UCB~\cite{kazerouni2017conservative} with the safest action as reference, which enforces a different notion of safety (cumulative reward relative to a baseline policy) and ignores harm, so it serves as a reference for that notion rather than as a competitor; an unconstrained UCB; NeuroSafe-CBO at its default setting and, in lending and
 IHDP, an oracle that sees the true context.
 
@@ -390,10 +378,7 @@ into four-hour windows; we keep windows in which the mean arterial pressure (MAP
 window was below 70\,mmHg and the patient was already receiving norepinephrine. This yields 65,100
 windows from 6,197 stays. The action is one of five norepinephrine dose bins, utility is the next
 window's MAP, and harm is a new arrhythmia. Stays were split in half; one half fits the simulator, and
-the other (31,383 windows, 3,099 stays) is used only for evaluation. Harm models (gradient boosting,
-regularised gradient boosting, logistic regression) and MAP models (gradient boosting, regularised
-gradient boosting, ridge regression) were compared by grouped 5-fold cross-validation on the fit half,
-with stays never split across folds, and chosen by log-loss and $R^2$ respectively. Before running any agent we specified a gate, recorded in the analysis code before it was evaluated but not publicly registered: the domain is used for method comparison only if, at some $\alpha$, at least 80\%
+the other (31,383 windows, 3,099 stays) is used only for evaluation. Three harm and three MAP model classes were compared by grouped 5-fold cross-validation on the fit half, with stays never split across folds (Supplementary Table~S4). Before running any agent we specified a gate, recorded in the analysis code before it was evaluated but not publicly registered: the domain is used for method comparison only if, at some $\alpha$, at least 80\%
 of states have two or more safe doses, the MAP-maximising dose is unsafe in at least 10\% of states,
 and the best constrained policy improves on clinicians by at least 0.5\,mmHg. The gate was evaluated on 8,000 windows sampled from the fit half. Because the simulator is fitted to that half, this choice favours passing the gate, so a failure there is conservative for a negative conclusion. On the held-out half the gate fails in the same way at every $\alpha$: the best constrained policy improves on clinicians by $0.21$\,mmHg at $\alpha=0.02$ and by at most $0.34$\,mmHg at any $\alpha$, equal to the unconstrained optimum. The real-data confirmation evaluates the $\alpha=0.02$
 policy, softened to play its chosen dose with probability $1-\varepsilon$ ($\varepsilon=0.05$), against
@@ -475,11 +460,7 @@ safety--utility tension. \\
 \end{table}
 
 \subsection*{The information floor is attained}
-Beyond the proof, \texttt{experiments/verify\_theorem.py} checks the pathwise identity in all four
-cases, Sheppard's formula at 20 values of $\rho$ (maximum error $0.0014$), Corollary~\ref{cor:gauss}
-against seven policy families including randomised and feedback-adaptive ones (none falls below the
-floor), and Theorem~\ref{thm:floor} with autoregressive contexts, where a Bayes rule on the Kalman
-posterior makes $0.1763$ mistakes per round against a computed floor of $0.1750$. On the simulated
+Beyond the proof, \texttt{experiments/verify\_theorem.py} checks the pathwise identity, Sheppard's formula (maximum error $0.0014$ over 20 values of $\rho$) and Corollary~\ref{cor:gauss} against seven policy families, including randomised and feedback-adaptive ones; none falls below the floor. On the simulated
 Gaussian instance (Supplementary Table~S6; Supplementary Fig.~S1) the Bayes rule matches
 $\arccos(\rho)/\pi$ at every $\rho$ (largest discrepancy $0.004$). The per-decision
 $\alpha$-constrained Bayes rule keeps violations near $0.01$ and pays $0.18$--$0.47$, and our method,
@@ -489,12 +470,7 @@ correctly safe but substantially more conservative than the constrained optimum 
 
 
 \subsection*{Frontiers across the three domains}
-Figure~\ref{fig:domains} shows every method's safety--utility frontier on the three domains.  On IHDP, where feasibility genuinely depends on the case, our
-frontier lies above and to the left of every baseline that operates at comparable violation. On the
-SCM, our frontier and Chance's meet except where the budget is tight. On lending, all learners lie far
-below the context oracle and below the best policy available to any agent that sees only the context
-channel, and safe GP-UCB is above our frontier where both operate. The next subsections quantify each
-domain; full matched comparisons for the SCM and lending are in Supplementary Tables~S1 and S2.
+Figure~\ref{fig:domains} shows every method's safety--utility frontier on the three domains.  Full matched comparisons for the SCM and lending are in Supplementary Tables~S1 and S2.
 
 \begin{figure}[t]
 \centering
@@ -518,18 +494,14 @@ realised violation is roughly two to three times its nominal level ($0.063$ at $
 at $0.05$, $0.200$ at $0.10$) and never falls below $0.063$, so below that level the comparison is one
 of reachability rather than of return at equal violation. Second, NeuroSafe-Ctx finds no certified
 action on 78--94\% of decisions at $\alpha\le0.05$ (17\% at $\alpha=0.15$) and then plays its
-lowest-certified-harm action; its violation does not fall below $0.033$, so for $\alpha\le0.03$ it
-exceeds the nominal level. Chance can exceed our return only by abandoning the budget: it reaches
-$5.68$ at violation $0.272$ against our $5.17$ at $0.081$.
+lowest-certified-harm action; its violation does not fall below $0.033$, so for $\alpha\le0.03$ it exceeds the nominal level (see Limitations). 
 
 \subsection*{IHDP: comparison with SafeOpt-style baselines}
 Against reference SafeOpt the margin is larger: $+1.36$ to $+2.02$ return at all four of its settings,
 with lower violation at three (CIs excluding zero) and equal violation at the fourth, and our frontier
 is above it at all four comparable points. Against our own safe GP-UCB the result is a trade: that
 baseline earns $5.02$--$5.22$ against our $4.78$--$5.17$, more at four of six settings (CIs excluding
-zero), while our violation is lower at all six. NeuroSafe-CBO reaches $4.86$ at violation
-$0.211$, and the context-observing oracle $4.79$ at $0.013$; our method exceeds the oracle's return for
-$\alpha\ge0.25$ only by spending more budget than the oracle's $\alpha=0.15$ rule allows.
+zero), while our violation is lower at all six. NeuroSafe-CBO reaches $4.86$ at violation $0.211$, and the context-observing oracle $4.79$ at $0.013$. Against Safe UCB-GLM, the closest prior design, our frontier is higher at both comparable points ($+0.14$ and $+0.12$); at equal $\alpha$ ours earns more for $\alpha\le0.05$ ($+0.92$ at $\alpha=0.02$) and violates less for $\alpha\ge0.15$ (by $0.022$--$0.060$) (Supplementary Table~S10).
 
 \begin{table}[t]
 \caption{\textbf{Paired tests at operating points matched on tuning seeds, IHDP with a binding harm
@@ -539,6 +511,9 @@ marks CIs that exclude zero.}
 \centering\small
 \resizebox{\linewidth}{!}{\input{tables/matched_ihdp.tex}}
 \end{table}
+
+\subsection*{IHDP: the advantage tracks what the context reveals}
+Because the IHDP harm channel is constructed, we tested in revision whether the gain comes from the mechanism or the construction, adding observation noise so that the correlation $\rho$ between the observed context and the signal that drives harm falls from $0.99$ (the setting above) to $0.3$, holding everything else fixed (Supplementary Table~S8). The advantage falls as our claim predicts: the mean gain of our frontier over Chance at comparable violation is $+2.09$ at $\rho=0.99$, $+1.38$ at $0.9$, $+0.60$ at $0.7$ and $+0.13$ at $0.3$. The safety advantage of the headline pair vanishes for $\rho\le0.95$ and reverses for $\rho\le0.7$ ($\Delta V=+0.032$, CI $+0.012$ to $+0.057$, at $\rho=0.3$), and our lowest reachable violation rises from $0.033$ to $0.083$. Chance, which ignores context, is unaffected.
 
 \subsection*{Nonstationary SCM: gains only where safety is tight}
 Against Chance, the gain is concentrated where safety is tight: at Chance's three most conservative
@@ -551,7 +526,7 @@ at $\alpha=0.35$ (violation $0.125$) our method has lower violation than every G
 or equal return at all six. Reference SafeOpt operates at violation $0.002$--$0.063$; our frontier is
 above it at both comparable points, by $+0.19$ and $+0.45$, and at its two most conservative settings it
 collapses onto its safe seed (return $1.182$ at violation $0.002$), as its design prescribes when the
-safe set cannot be expanded. The conservative bandit ignores harm and violates at $0.65$--$0.75$, and
+safe set cannot be expanded. Against Safe UCB-GLM our method earns more and violates less at every $\alpha\ge0.05$ (CIs excluding zero), and its frontier is higher at all five comparable points (Supplementary Table~S10). The conservative bandit ignores harm and violates at $0.65$--$0.75$, and
 the unconstrained UCB reaches $2.352$ return at $0.332$ violation.
 
 \subsection*{Lending: no advantage on real default labels}
@@ -561,21 +536,11 @@ terms, a tie. Safe GP-UCB is better where both operate: at its three least conse
 (violation $0.19$--$0.22$) it earns $0.179$--$0.218$ against our $0.145$ at $0.187$, more at all three
 (CIs excluding zero), and it is above our frontier at 4 of 5 comparable points, although our method and
 Chance also operate at violation $0.03$--$0.12$, a region GP-UCB never reaches (its minimum is $0.188$).
-Reference SafeOpt is at least as good as our method: at its $\beta=2$ point (return $0.070$, violation
-$0.048$) our matched configuration returns $0.049$ at violation $0.058$ ($\Delta R=-0.021$, CI $-0.040$
-to $+0.005$), at $\beta=1$ ($0.096$ at $0.106$) ours returns $0.086$ at $0.117$ ($\Delta R=-0.010$, CI
-$-0.029$ to $+0.014$), and its frontier lies above ours at the one comparable point. Which method is
+Reference SafeOpt is at least as good as our method: neither matched return difference excludes zero ($-0.021$, CI $-0.040$ to $+0.005$, at its $\beta=2$ point; $-0.010$, CI $-0.029$ to $+0.014$, at $\beta=1$), and its frontier lies above ours at the one comparable point. Which method is
 preferable on lending therefore depends on the risk budget, and we claim no advantage there.
 
 \subsection*{Lending: most of the gap to the oracle is missing information}
-Every learner is far from the oracle, which earns $0.249$ at violation $0.003$. The oracle sees both
-applicant covariates, whereas agents see only their noisy average. The best policy for any agent
-limited to that channel (dashed line in Fig.~\ref{fig:domains}b) earns $0.090$ at violation $0.004$,
-only 36\% of the oracle's return at similar violation: most of the oracle's advantage at that risk
-level is unavailable to any learner, the regime Theorem~\ref{thm:floor} describes. The learners' own
-shortfall is also large: at violation $\approx0.05$ the channel ceiling is $0.154$, while every learner,
-ours included, earns $0.038$--$0.046$. At $n=200$ both information loss and learning contribute
-substantially, and we do not attribute the gap to either alone.
+Every learner is far from the oracle ($0.249$ at violation $0.003$), which sees both applicant covariates where agents see only their noisy average. The best policy available from that channel (dashed line in Fig.~\ref{fig:domains}b) earns $0.090$ at violation $0.004$, only 36\% of the oracle's return, so most of the gap is missing information, the regime Theorem~\ref{thm:floor} describes; but at violation $\approx0.05$ the channel allows $0.154$ while every learner, ours included, earns $0.038$--$0.046$, so learning also falls short.
 
 \begin{table}[t]
 \caption{\textbf{Ablations on held-out seeds.} ``Frontier'': at how many of the variant's operating
@@ -616,13 +581,7 @@ within 200 rounds. On lending the GLM trades violation for return: at $\alpha=0.
 $0.046$ and $0.065$), and the frontiers cross.
 
 \subsection*{Ablation: bucketed utility and filter add nothing}
-The bucketed utility and the Kalman filter show no consistent benefit in any domain: frontier
-differences lie within $\pm0.08$ on the SCM (for bucketed utility mostly in the variant's favour, and at
-$\alpha=0.15$ the full method violates slightly more), within $\pm0.002$ on lending, and within $-0.05$
-to $+0.10$ on IHDP, with no difference at $\alpha=0.15$ whose CI excludes zero. For the filter this is
-expected: the raw channel already correlates $0.93$ with the context on the SCM, and lending contexts
-are independent, where the filter reduces to the identity by design. We retain both components only
-because they are harmless, and we do not claim them as contributions.
+The bucketed utility and the Kalman filter show no consistent benefit in any domain (frontier differences within $\pm0.08$ on the SCM, $\pm0.002$ on lending and $-0.05$ to $+0.10$ on IHDP). For the filter this is expected: the raw channel already correlates $0.93$ with the context on the SCM, and lending and IHDP contexts are independent, where the filter reduces to the identity. We retain both only because they are harmless, and claim neither as a contribution.
 
 \subsection*{MIMIC-IV: the gate fails}
 The arrhythmia model's in-sample AUC of $0.806$ does not survive grouped cross-validation
@@ -673,13 +632,12 @@ environments.
 \subsection*{Statistical multiplicity and tuning budgets}
 We report more than 100 confidence intervals without adjustment, so a few of them will exclude zero by
 chance; we have therefore based conclusions on frontier-level patterns that hold across many operating
-points. Tuning budgets were not equal: our method was tuned over 18 configurations and reference
-SafeOpt over 6, which favours our method in any comparison where it wins narrowly. The IHDP gains over
+points. Tuning budgets were not equal: our method was tuned over 18 configurations, reference SafeOpt over 6 and Safe UCB-GLM over 9, which favours our method in any comparison where it wins narrowly. The IHDP gains over
 SafeOpt are large enough that this asymmetry cannot explain them, but the narrow SCM gains could be
 affected.
 
 \subsection*{How safety is achieved at small budgets}
-At small $\alpha$ our method's safety comes largely from its fallback to the least-risky action (78--94\% of IHDP decisions at $\alpha\le0.05$), not from active optimisation. Its realised violation stays at or below the nominal level for every $\alpha\ge0.075$ in all three domains, but not below that: it exceeds $\alpha$ on IHDP for $\alpha\le0.03$, on the SCM at $\alpha=0.02$ and on lending for $\alpha\le0.05$. We therefore claim calibrated behaviour only for $\alpha\ge0.075$, and a safety engineer should read the low-$\alpha$ end of our frontiers as the behaviour of a cautious default rather than evidence of efficient learning.
+At small $\alpha$ our method's safety comes largely from its fallback to the least-risky action (78--94\% of IHDP decisions at $\alpha\le0.05$), not from active optimisation. Its realised violation stays at or below the nominal level for every $\alpha\ge0.075$ in all three domains, but not below that. A decomposition added in revision locates the excess (Supplementary Table~S9). On the SCM it comes almost entirely from the ten random warm-up rounds ($0.027$ of $0.029$ at $\alpha=0.02$); a variant whose warm-up plays the safest action stays within budget at every $\alpha$ tested and also earns more ($1.75$ against $1.37$ at $\alpha=0.05$). On IHDP the safest action, no treatment, itself violates at $0.021$, so $\alpha\le0.02$ leaves no room to learn; the same variant meets the budget for $\alpha\ge0.03$ but earns much less ($2.39$ against $3.48$ at $\alpha=0.05$) because it rarely tries treatment. Every reported comparison uses the method as frozen on tuning seeds, and we claim calibrated behaviour only for $\alpha\ge0.075$.
 
 \subsection*{Clinical validity of the MIMIC-IV audit}
 A clinician would raise several objections to the MIMIC-IV domain, and we accept them. The simulator
@@ -707,8 +665,7 @@ nothing for any policy to gain over clinicians in blood pressure. Theorem~\ref{t
 gains of this kind are bounded: the information in the context channel, not the learning algorithm,
 sets a floor that every policy shares. Future work should test the mechanism with richer contexts and longer horizons, and derive an upper bound that matches the floor.
 
-\section*{Data availability}
-The German Credit data are publicly available from the UCI Machine Learning Repository~\cite{hofmann1994}.
+\medskip\noindent\textbf{Data availability.} The German Credit data are publicly available from the UCI Machine Learning Repository~\cite{hofmann1994}.
 The IHDP covariates and response surfaces are publicly available~\cite{hill2011}. MIMIC-IV is available to
 credentialed researchers through PhysioNet~\cite{johnson2023mimic,goldberger2000}; under its data use
 agreement we cannot share patient-level data or data derived from them, but the aggregate statistics
@@ -716,8 +673,7 @@ reported here (\texttt{results/v3/mimic/audit.json}) and the code that produces 
 database are released. All other result files supporting the findings are available in the code
 repository.
 
-\section*{Code availability}
-All code, result files and scripts that regenerate every table and figure are available at \coderepo{} (archived release: \url{https://doi.org/10.5281/zenodo.23624021}). Supplementary Note~1 lists the commands in order.
+\medskip\noindent\textbf{Code availability.} All code, result files and scripts that regenerate every table and figure are available at \coderepo{} (archived release: \url{https://doi.org/10.5281/zenodo.23624021}). Supplementary Note~1 lists the commands in order.
 
 
 {\footnotesize\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
@@ -768,15 +724,13 @@ All code, result files and scripts that regenerate every table and figure are av
 \bibitem{kong1992} Kong, A. A note on importance sampling using standardized weights. Technical Report 348, Department of Statistics, University of Chicago (1992).
 \bibitem{thomas2015hcope} Thomas, P. S., Theocharous, G. \& Ghavamzadeh, M. High-confidence off-policy evaluation. In \emph{Proc. 29th AAAI Conference on Artificial Intelligence} (2015).
 \bibitem{thomas2016} Thomas, P. S. \& Brunskill, E. Data-efficient off-policy policy evaluation for reinforcement learning. In \emph{Proc. 33rd International Conference on Machine Learning} (PMLR, 2016).
-\bibitem{singer2016} Singer, M. \emph{et al.} The third international consensus definitions for sepsis and septic shock (Sepsis-3). \emph{JAMA} \textbf{315}, 801--810 (2016).
 \bibitem{physionet2025llm} PhysioNet. Use of MIMIC data with large language models and online services. https://physionet.org/news/post/llm-responsible-use/ (2025).
+\bibitem{singer2016} Singer, M. \emph{et al.} The third international consensus definitions for sepsis and septic shock (Sepsis-3). \emph{JAMA} \textbf{315}, 801--810 (2016).
 \end{thebibliography}}
 
 
 
-\section*{Author contributions}
-\verify{M.M.H. [role]. A.S. [role]. S.M.H. [role, e.g. carried out the MIMIC-IV audit]. All authors reviewed and approved the manuscript.}
+\medskip\noindent\textbf{Author contributions.} \verify{M.M.H. [role]. A.S. [role]. S.M.H. [role, e.g. carried out the MIMIC-IV audit]. All authors reviewed and approved the manuscript.}
 
-\section*{Additional information}
-\textbf{Competing interests:} the authors declare no competing interests. \textbf{Correspondence} and requests for materials should be addressed to M.M.H.
+\medskip\noindent\textbf{Additional information.} \textbf{Competing interests:} the authors declare no competing interests. \textbf{Correspondence} and requests for materials should be addressed to M.M.H.
 \end{document}

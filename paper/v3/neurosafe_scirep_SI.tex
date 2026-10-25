@@ -142,6 +142,39 @@ advance: $\ge0.80$, $\ge0.10$ and $\ge0.5$\,mmHg.}
 \resizebox{\linewidth}{!}{\input{tables/mimic_gate.tex}}
 \end{table}
 
+\section*{Supplementary Note 5: Mechanism tests added in revision}
+\textbf{IHDP informativeness sweep} (\texttt{experiments/ihdp\_info\_sweep.py}). Observation noise is
+increased so that the correlation $\rho$ between the observed context and the risk signal that drives
+harm takes the listed values (empirical correlations $0.951$, $0.903$, $0.709$, $0.515$ and $0.319$ for
+the targets $0.95$, $0.9$, $0.7$, $0.5$ and $0.3$); all other settings, seeds 100--149 and agents are as in
+the main results. \textbf{Small-$\alpha$ decomposition} (\texttt{experiments/small\_alpha\_check.py}).
+Violation is split between the ten warm-up rounds and the rest, and compared with always playing the safest
+action, the context-seeing oracle (IHDP) and a variant whose warm-up plays the safest action.
+
+\begin{table}[h]
+\caption{\textbf{IHDP: NeuroSafe-Ctx against the context-blind Chance rule as the context's
+informativeness $\rho$ falls} (50 held-out seeds). Columns 2--3: the headline pair (ours $\alpha=0.15$
+minus Chance $\alpha=0.02$) with 95\% bootstrap CIs; bold: CI excludes zero. Column 4: at how many of
+Chance's operating points within our violation range our interpolated frontier is higher, and the mean gap.}
+\centering\small
+\resizebox{\linewidth}{!}{\input{tables/ihdp_info_sweep.tex}}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{Where small-budget violations come from} (50 held-out seeds). ``Of which warm-up'':
+violations during the ten warm-up rounds, as a share of all 200 rounds.}
+\centering\small
+\input{tables/small_alpha.tex}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{Safe UCB-GLM (Amani et al.-style) against NeuroSafe-Ctx at equal $\alpha$} (50 held-out seeds;
+\texttt{experiments/run\_safe\_glm.py}). R: return per step; V: violation rate. Differences are ours minus
+Safe UCB-GLM with 95\% bootstrap CIs; bold: CI excludes zero.}
+\centering\small
+\resizebox{\linewidth}{!}{\input{tables/safe_glm.tex}}
+\end{table}
+
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.6\linewidth]{figures/fig_floor.pdf}
