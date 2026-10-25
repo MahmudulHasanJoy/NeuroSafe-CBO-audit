@@ -16,6 +16,7 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}
 \newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
 \renewcommand{\figurename}{Figure}
 % ---- Items still to confirm before submission (shown in red). When an item is confirmed, edit it in
 % place; when none remain, change the two lines below to  \newcommand{\verify}[1]{#1}  and
@@ -23,12 +24,13 @@
 % neurosafe_cbo/v3.py; \verify marks text the authors must supply or confirm.
 \newcommand{\verify}[1]{\textcolor{red}{#1$^{\dagger}$}}
 \newcommand{\chk}{\textcolor{red}{$^{\dagger}$}}
-\newcommand{\coderepo}{\url{https://github.com/MahmudulHasanJoy/NeuroSafe-CBO-audit}}
+\newcommand{\coderepo}{\url{https://github.com/MahmudulHasanJoy/NeuroSafe-CBO}}
 
 \title{\Large\bfseries Context-conditional feasibility improves safe sequential decisions\\ only as far as the observed context reveals harm}
-\author{Mahmudul Hasan Joy$^{1,*}$ and Syed Mehedi Hussain$^{1}$\\[4pt]
+\author{Md. Mahmudul Hasan$^{1,*}$, Aurin Subah$^{1}$ and Syed Mehedi Hussain$^{1}$\\[4pt]
 \normalsize $^{1}$Department of Computer Science and Engineering, Independent University, Bangladesh, Dhaka, Bangladesh\\
-\normalsize $^{*}$\texttt{mhj.joy2014@gmail.com}}
+\normalsize $^{*}$Corresponding author: \texttt{mhj.joy2014@gmail.com}\\
+\normalsize \texttt{mhj.joy2014@gmail.com}, \texttt{aurin.subah03@gmail.com}, \texttt{syedsayn@gmail.com}}
 \date{}
 
 \begin{document}
@@ -37,9 +39,7 @@
 \begin{abstract}
 \noindent Many decisions, from issuing loans to dosing medicines, must keep the probability of harm
 below a fixed limit while maximising benefit. Learning methods for this problem are
-usually compared on simulated benchmarks, and small apparent gains are read as progress. We audited one
-such method and found that it could not outperform its baseline because the two choose the same action
-almost every time, and that four benchmarks used for such comparisons were defective. We prove that
+usually compared on simulated benchmarks, and small apparent gains are read as progress. We audited our own earlier method and found that it could not outperform its baseline because the two choose the same action almost every time, and we found four defects in the environments used to evaluate it. We prove that
 when the information needed to judge safety is observed only through a noisy signal, every decision
 policy pays a combined cost in lost benefit and safety violations that is set by the quality of that
 signal, and that this limit can be reached. We then built a method that estimates the
@@ -99,33 +99,27 @@ channel, so it is unclear whether a gap to an oracle reflects poor learning or m
 These gaps are compounded by the broader difficulty of reproducing small effects in machine-learning
 experiments~\cite{henderson2018,pineau2021,gundersen2018}.
 
-We address these gaps in one study. We audit a published method for equation~(\ref{eq:obj}),
-NeuroSafe-CBO, that was statistically indistinguishable from its own chance-constrained baseline, and
+We address these gaps in one study. We audit our own earlier method for equation~(\ref{eq:obj}), NeuroSafe-CBO~\cite{neurosafecbo}, which was statistically indistinguishable from its own chance-constrained baseline, and
 we show why: the baseline already solves the objective, and the proposed override changes the
-played action on 0.44\% of held-out decisions. We audit the benchmarks used to evaluate such methods
-and find four measurable defects. We prove that when feasibility depends on a latent context seen
+played action on 0.44\% of held-out decisions. We audit the environments we had built or adapted to evaluate it and find four measurable defects in three of them. We prove that when feasibility depends on a latent context seen
 through a noisy channel, every policy pays a combined cost in lost utility and violations that is set
-by the channel's correlation with the context, and that this floor is attained. Guided by the
+by the channel's correlation with the context, and that this floor is attained; a one-line generalisation shows that the risk budget $\alpha$ sets the exchange rate between regret and violations, at which the $\alpha$-chance-constrained rule is exactly optimal. Guided by the
 diagnosis, we build the context-conditional rule it calls for, NeuroSafe-Ctx, and evaluate it on three
 domains against the reference SafeOpt implementation and other baselines, with operating points fixed
 on tuning seeds and tested on held-out seeds. Finally, we build a clinical domain from MIMIC-IV and
 subject it to a test fixed in advance before any method comparison (Fig.~\ref{fig:overview}).
 
-Our contributions are as follows. (i) A structural diagnosis showing that the published method and
-its baseline act identically on 99.6\% of decisions, that its context module carried almost no
+Our contributions are as follows. (i) A structural diagnosis showing that our earlier method and its baseline act identically on 99.6\% of decisions, that its context module carried almost no
 information about the confounder, and that its update taught the learner to ignore context.
-(ii) A benchmark audit identifying four defects, three of which silently invalidate safety
-comparisons, together with fixes for two, an argument for removing the third, and a fifth,
+(ii) An audit of the evaluation environments, all built or adapted by us for the earlier method, identifying four defects in three environments, three of which silently invalidate safety comparisons, together with fixes for two, an argument for removing the third, and a fifth,
 reproducibility, defect found by regenerating every result. (iii) A tight information floor,
 $\mathbb E R_n+2\Delta\,\mathbb E V_n\ge\Delta n\arccos(\rho)/\pi$ for a Gaussian channel with
-correlation $\rho$, attained by the Bayes rule and verified numerically. (iv) An evaluation of the
-implied method on three domains: on IHDP, where safety depends on the case, it improves return by
-$+1.615$ and lowers violation by $0.021$ at the same time; on a nonstationary structural causal model
+correlation $\rho$, attained by the Bayes rule and verified numerically, together with its generalisation to any price on violations, under which the $\alpha$-chance-constrained rule attains the floor exactly when a violation costs $\Delta/\alpha$. (iv) An evaluation of the
+implied method on three domains: on IHDP with a constructed harm channel in which safety depends on the case---a test of the mechanism, not of real-world benefit---it improves return by $+1.615$ and lowers violation by $0.021$ at the same time against a baseline matched on realised violation, and its realised violation respects the budget for every $\alpha\ge0.075$; on a nonstationary structural causal model
 it helps only when the budget is tight; on real lending data it offers no advantage, and we report
-this as plainly as the gains. (v) An audited clinical domain in which a pre-registered gate rules out
+this as plainly as the gains. (v) An audited clinical domain in which a gate specified in advance rules out
 a method comparison, confirmed by off-policy evaluation on real held-out ICU stays. We do not claim a
-uniform improvement over baselines, a regret upper bound for our method, or any clinical or
-underwriting policy.
+uniform improvement over baselines, a regret upper bound for our method, algorithmic novelty for NeuroSafe-Ctx, which is a Bayesian variant of safe generalised-linear bandits~\cite{amani2020glm}, or any clinical or underwriting policy.
 
 \section*{Related work}
 
@@ -144,24 +138,20 @@ also our own safe GP-UCB reimplementation in the same style.
 Conservative bandits require cumulative reward to stay above a fraction of a baseline policy's
 reward~\cite{wu2016conservative,kazerouni2017conservative}; safe linear bandits require each played
 action to satisfy an unknown linear constraint with high
-probability~\cite{amani2019linear,moradipari2021}; and bandits with linear constraints control the
-expected cost of the policy~\cite{pacchiano2021}. Generalised linear bandits supply the confidence
-bounds we use for a binary harm event~\cite{filippi2010,li2017glm}. Constrained Markov decision
+probability~\cite{amani2019linear,moradipari2021}, with a generalised-linear extension for safety functions of the same form as ours~\cite{amani2020glm}; and bandits with linear constraints control the expected cost of the policy~\cite{pacchiano2021}, including primal--dual algorithms whose violations vanish after a constant number of rounds~\cite{liu2021}. Generalised linear bandits supply the confidence bounds we use for a binary harm event~\cite{filippi2010,li2017glm}, and exponential forgetting extends them to nonstationary environments~\cite{russac2021}. Constrained Markov decision
 processes~\cite{altman1999cmdp} and constrained policy optimisation~\cite{achiam2017cpo} extend these
 ideas to sequential control; a survey of safe reinforcement learning is given by García and
 Fernández~\cite{garcia2015survey}. The chance constraint in equation~(\ref{eq:obj}) follows the
-classical formulation of Charnes and Cooper~\cite{charnes1959}. None of these lines of work bounds
-what is achievable when the variable that determines feasibility is only partially observed.
+classical formulation of Charnes and Cooper~\cite{charnes1959}. NeuroSafe-Ctx belongs to this family and is closest to safe generalised-linear bandits~\cite{amani2020glm}, from which it differs in using a Bayesian (Laplace) rather than frequentist confidence set, a chance constraint on a thresholded harm variable, exponential forgetting and an explicit least-risky fallback; these are design choices, not algorithmic contributions. Lower bounds in this family assume fully observed contexts and couple regret and violations through gap-dependent terms~\cite{chen2022}; none bounds what is achievable when the variable that determines feasibility is only partially observed.
 
 \subsection*{Context, nonstationarity and information limits}
 Contextual bandits with covariates~\cite{rigollet2010} and nonstationary bandits with discounting or
 forgetting~\cite{russac2019} motivate the two features of our rule: feasibility estimated per
 context, and exponential forgetting. Our context filter is a Kalman filter~\cite{kalman1960}; for a
-linear-Gaussian latent, predictive coding~\cite{rao1999} reduces to the same computation, which is why
-we replaced the published predictive-coding module rather than tuning it. Lower bounds in the
+linear-Gaussian latent, predictive coding~\cite{rao1999} reduces to the same computation, which is why we replaced our earlier predictive-coding module rather than tuning it. Lower bounds in the
 bandit literature usually concern regret alone~\cite{lattimore2020}. Our floor instead couples regret
 and violations through the Bayes error of classifying the latent context, which for a Gaussian
-channel follows from Sheppard's formula~\cite{sheppard1899}.
+channel follows from Sheppard's formula~\cite{sheppard1899}. Bandits with noisy or distributional contexts~\cite{kirschner2019,kim2023} measure regret against an oracle that sees only the noisy context, and the problem-specific lower bound for that setting has been left open~\cite{kim2023}; our floor quantifies, in the safe setting, the gap between that oracle and one that sees the true context.
 
 \subsection*{Benchmarks, reproducibility and clinical evaluation}
 Semi-synthetic benchmarks such as IHDP combine real covariates with simulated outcomes so that
@@ -231,36 +221,43 @@ independent of $(c_s,\eta_s)_{s\ge1}$, then for every policy
 \end{equation}
 with equality for the Bayes rule that plays $a_1$ if and only if $o_t\le0$.
 \end{corollary}
+\noindent The proof applies Sheppard's formula~\cite{sheppard1899} to the Bayes error and is given in Supplementary Note~4.
 
-\begin{proof}
-$(c_t,o_t)$ is independent of everything before round $t$, so
-$\mathbb P(c_t\le0\mid\mathcal G_t)=\mathbb P(c_t\le0\mid o_t)$, which exceeds $\tfrac12$ if and only if
-$o_t\le0$. The expected minimum in equation~(\ref{eq:floor}) is therefore
-$\mathbb P(\mathrm{sign}\,c_t\ne\mathrm{sign}\,o_t)$, which for a centred bivariate normal with
-correlation $\rho$ equals $\arccos(\rho)/\pi$ by Sheppard's formula~\cite{sheppard1899}. Apply
-Theorem~\ref{thm:floor}.
-\end{proof}
+
 
 \subsection*{Consequences and scope}
 The floor is linear in $n$, so no policy has both sublinear regret and sublinear violations; a policy
 with $\mathbb E V_n\le vn$ has $\mathbb E R_n\ge\Delta n(\arccos(\rho)/\pi-2v)$. Writing the posterior
 standard deviation as $\varepsilon=\sigma_c\sqrt{1-\rho^2}$ gives
 $\arccos(\rho)/\pi=\arctan(\varepsilon/\sigma_c\rho)/\pi\approx\varepsilon/(\pi\sigma_c)$: the floor is
-linear in the filter's error, so an $n\,\varepsilon$ term that an earlier draft of this work
-conjectured in the upper bound of a specific algorithm is, on this class, a lower bound for every
-algorithm. As an illustration only---our structural causal model is not a threshold instance and its
+linear in the filter's error, so on this class an $n\,\varepsilon$ term is unavoidable for every algorithm rather than an artefact of a particular analysis. The proof is elementary---the pathwise identity reduces the weighted cost to a count of classification mistakes---and what we claim is the framing and the attained constant, not technical depth. As an illustration only---our structural causal model is not a threshold instance and its
 contexts are autocorrelated---a channel with $\rho=0.93$, as measured in the Results, would impose a
 floor of $0.12$ mistakes per round on a threshold instance. Corollary~\ref{cor:gauss} needs independent
 contexts so that feedback carries no information about $c_t$; with autocorrelated contexts
 Theorem~\ref{thm:floor} still holds, but past feedback can lower the Bayes error below the
 observation-only value. The bound is tight over all policies; policies that also enforce a
-per-decision chance constraint pay more (Table~\ref{tab:floor}).
+per-decision chance constraint pay more on this measure (Supplementary Table~S6), but are optimal at their own price of a violation, as the next result shows.
+
+\subsection*{The risk budget as the price of a violation}
+The weight $2\Delta$ in Theorem~\ref{thm:floor} is the unique weight under which both kinds of mistake, declining when acting is safe and acting when it is not, cost $\Delta$. Pricing violations at any $\lambda\ge\Delta$ instead brings the risk budget into the floor.
+
+\begin{proposition}[Weighted floor]\label{prop:alpha}
+For every policy on a threshold instance and every $\lambda\ge\Delta$,
+\begin{equation}
+\mathbb E[R_n]+\lambda\,\mathbb E[V_n]\;\ge\;\sum_{t=1}^n\mathbb E\big[\min\{\Delta\,\mathbb P(c_t\le0\mid\mathcal G_t),\,(\lambda-\Delta)\,\mathbb P(c_t>0\mid\mathcal G_t)\}\big],
+\label{eq:wfloor}
+\end{equation}
+with equality for the policy that plays $a_1$ if and only if $\mathbb P(c_t>0\mid\mathcal G_t)\le\Delta/\lambda$. The chance-constrained rule that plays $a_1$ if and only if $\mathbb P(H_t>\tau\mid do(a_1),\mathcal G_t)\le\alpha$ is this policy for $\lambda=\Delta/\alpha$, and Theorem~\ref{thm:floor} is the case $\alpha=\tfrac12$ (proof in Supplementary Note~4). Under the Gaussian channel of Corollary~\ref{cor:gauss}, the floor at $\lambda=\Delta/\alpha$ equals $\Delta n\,\mathbb E[\min\{1-\Phi(\kappa U),(\alpha^{-1}-1)\Phi(\kappa U)\}]$ with $U\sim\mathcal N(0,1)$ and $\kappa=\rho/\sqrt{1-\rho^2}$.
+\end{proposition}
+
+
+
+The risk budget is thus not inert in the floor: it is the exchange rate between regret and violations, and a chance-constrained rule that knows the posterior is exactly optimal at that rate. At small $\alpha$ a violation is so expensive that the floor approaches the cost of always declining, $\Delta\,\mathbb P(c_t\le0)$. We verified Proposition~\ref{prop:alpha} by simulation at $\rho\in\{0.5,0.707,0.928\}$ and $\alpha\in\{0.02,0.05,0.15,0.5\}$, where the $\alpha$-rule matches the floor to within simulation error.
 
 \section*{Method}
 
 NeuroSafe-Ctx implements equation~(\ref{eq:obj}) with three components and no anchoring to a
-reference policy (Fig.~\ref{fig:overview}). The implementation is \texttt{neurosafe\_cbo/v3.py} in the
-code repository.
+reference policy (Fig.~\ref{fig:overview}). The implementation is \texttt{neurosafe\_cbo/v3.py} in the code repository. In terms of existing algorithms it is a Bayesian (Laplace) variant of a safe generalised-linear bandit~\cite{amani2020glm} with exponential forgetting~\cite{russac2021} and a least-risky fallback; the ablations show that its context filter and bucketed utility can be removed without loss.
 
 \subsection*{Context filter}
 The observed context is modelled as an autoregressive latent plus noise,
@@ -346,7 +343,7 @@ with the fixes described in the Results: the agent chooses a loan size or declin
 default probability of a monotone gradient-boosted model fitted to 1,000 real outcomes; utility is
 loan size; the agent sees a noisy one-dimensional summary of the applicant ($\tau=0.25$). (iii)
 IHDP~\cite{hill2011}: real covariates and fitted response surfaces, with an explicit adverse-event
-channel that binds for the riskiest 30\% of infants, replacing an inert rank-based harm ($\tau=0.5$).
+channel that binds for the riskiest 30\% of infants, replacing an inert rank-based harm ($\tau=0.5$). This harm channel is constructed, because IHDP records no adverse events, and context matters in it by design, so we treat IHDP as a test of the mechanism rather than of real-world benefit. \verify{State the IHDP outcome realisation(s) used (e.g. NPCI setting A, realisation index) and how they map to seeds.}
 A fourth, clinical domain built from MIMIC-IV is audited separately, as described below.
 
 \subsection*{Baselines}
@@ -354,12 +351,11 @@ Chance is a context-blind chance-constrained rule that plays
 $\arg\max_{a:\hat p(a)\le\alpha}\{\hat\mu_U(a)+\beta\hat\sigma_U(a)\}$, which is equation~(\ref{eq:obj})
 under its own estimates. Reference SafeOpt~\cite{sui2015safeopt} is run contextually through the
 \texttt{safeopt} package (version 0.16, with 15 lines of compatibility fixes for Python $\ge$3.10 and
-NumPy $\ge$1.24 and no algorithmic change), with $a=0$ as its safe seed. Safe GP-UCB is our own
+NumPy $\ge$1.24 and no algorithmic change), with $a=0$ as its safe seed; \verify{state how the context enters (kernel over action and context, context handling during acquisition), from neurosafe\_cbo/safeopt\_ref.py}. Safe GP-UCB is our own
 reimplementation in the same style~\cite{sui2015safeopt,sui2018stageopt}; it certifies actions whose
 Gaussian-process upper bound on harm is at most $\tau$ and plays GP-UCB utility among them. It explores
 more aggressively than reference SafeOpt and the two are not equivalent, so we report both. We also
-include a conservative linear UCB~\cite{kazerouni2017conservative} with the safest action as
-reference, an unconstrained UCB, the published NeuroSafe-CBO at its default setting and, in lending and
+include a conservative linear UCB~\cite{kazerouni2017conservative} with the safest action as reference, which enforces a different notion of safety (cumulative reward relative to a baseline policy) and ignores harm, so it serves as a reference for that notion rather than as a competitor; an unconstrained UCB; NeuroSafe-CBO at its default setting and, in lending and
 IHDP, an oracle that sees the true context.
 
 \subsection*{Protocol and statistical analysis}
@@ -368,7 +364,7 @@ from 50 held-out seeds, 100--149. Each method's own safety knob is swept: $\alph
 and Chance, the confidence multiplier $\beta$ for safe GP-UCB and reference SafeOpt, and the budget for
 the conservative bandit. For paired comparisons at matched operating points, our $\alpha$ is chosen on
 the tuning seeds as the largest value whose violation rate does not exceed the baseline's; the
-comparison is then run on the held-out seeds, so no pairing is chosen after seeing held-out results.
+comparison is then run on the held-out seeds, so no pairing is chosen after seeing held-out results. The matching key is therefore realised violation, not nominal $\alpha$: when a baseline's realised violation exceeds its nominal level, the matched configuration of our method has a larger nominal $\alpha$ and a realised violation no higher than the baseline's.
 For each comparison we report the mean paired difference over the 50 held-out seeds and a two-sided
 95\% percentile bootstrap confidence interval (CI), resampling seeds; we describe a difference as
 clear when its CI excludes zero. We report more than 100 such intervals and do not adjust them for
@@ -380,7 +376,7 @@ violation range and count the points at which ours is higher. Figures show means
 \subsection*{Ablation study}
 To test which components matter, we remove one at a time while keeping everything else fixed and
 sweeping the same $\alpha$ grid: no GLM (harm estimated per cell and passed through a Gaussian
-cumulative distribution function, as in the published method), no context ($z\equiv0$), no bucketed
+cumulative distribution function, as in NeuroSafe-CBO), no context ($z\equiv0$), no bucketed
 utility (a single bucket), and no filter (the raw channel). Each variant is compared with the full
 method on its frontier and at $\alpha=0.15$. On IHDP we added, after the main runs, a calibrated
 Beta--Bernoulli cell model with the same cells and shrinkage and an upper posterior quantile matching
@@ -397,34 +393,28 @@ window's MAP, and harm is a new arrhythmia. Stays were split in half; one half f
 the other (31,383 windows, 3,099 stays) is used only for evaluation. Harm models (gradient boosting,
 regularised gradient boosting, logistic regression) and MAP models (gradient boosting, regularised
 gradient boosting, ridge regression) were compared by grouped 5-fold cross-validation on the fit half,
-with stays never split across folds, and chosen by log-loss and $R^2$ respectively. Before running any
-agent we fixed a gate: the domain is used for method comparison only if, at some $\alpha$, at least 80\%
+with stays never split across folds, and chosen by log-loss and $R^2$ respectively. Before running any agent we specified a gate, recorded in the analysis code before it was evaluated but not publicly registered: the domain is used for method comparison only if, at some $\alpha$, at least 80\%
 of states have two or more safe doses, the MAP-maximising dose is unsafe in at least 10\% of states,
-and the best constrained policy improves on clinicians by at least 0.5\,mmHg. The gate was evaluated on
-8,000 windows sampled from the fit half. The real-data confirmation evaluates the $\alpha=0.02$
+and the best constrained policy improves on clinicians by at least 0.5\,mmHg. The gate was evaluated on 8,000 windows sampled from the fit half. Because the simulator is fitted to that half, this choice favours passing the gate, so a failure there is conservative for a negative conclusion. On the held-out half the gate fails in the same way at every $\alpha$: the best constrained policy improves on clinicians by $0.21$\,mmHg at $\alpha=0.02$ and by at most $0.34$\,mmHg at any $\alpha$, equal to the unconstrained optimum. The real-data confirmation evaluates the $\alpha=0.02$
 policy, softened to play its chosen dose with probability $1-\varepsilon$ ($\varepsilon=0.05$), against
 clinicians on the held-out stays with weighted importance sampling~\cite{precup2000}, a fitted
 behaviour-policy model, importance weights capped at 20, and a doubly robust
 estimator~\cite{dudik2011,jiang2016}. An estimate is treated as reliable only if its effective sample
 size~\cite{kong1992} is at least 200 and at least 1\% of decisions. Confidence intervals resample stays
-(2,000 bootstrap replicates). The comparison of arrhythmia rates was not pre-registered and is reported
-as exploratory, with a sensitivity analysis over $\varepsilon\in\{0.02,0.05,0.10\}$ and weight caps
-$\{10,20,50\}$.
+(2,000 bootstrap replicates). An exploratory comparison of arrhythmia rates, which is not part of the gate, is reported in Supplementary Note~3.
 
 \subsection*{Ethics statement}
 This study used the MIMIC-IV database (version \verify{X.X})~\cite{johnson2023mimic}, accessed through
 PhysioNet~\cite{goldberger2000} under its credentialed-access data use agreement after completion of
-the required training. MIMIC-IV contains de-identified records; its creation was approved by the
-institutional review boards of Beth Israel Deaconess Medical Center and the Massachusetts Institute of
-Technology, which waived the requirement for informed consent\verify{}. All methods were performed in
+the required training. MIMIC-IV contains de-identified records; the collection of patient information and creation of the research resource was reviewed by the Institutional Review Board at the Beth Israel Deaconess Medical Center, which granted a waiver of informed consent and approved the data sharing initiative. All methods were performed in
 accordance with the relevant guidelines and regulations. Patient-level data never left the
-credentialed environment, and only aggregate statistics are reported or released.
+credentialed environment, and only aggregate statistics are reported or released. All MIMIC-IV processing was run locally under the data use agreement of the credentialed author (S.M.H.); no MIMIC-IV records or patient-level values were sent to any AI service, and AI assistants saw only analysis code and aggregate outputs of the kind reported in this paper, in line with PhysioNet's guidance on using MIMIC data with online services~\cite{physionet2025llm}.\verify{}
 
 \subsection*{Software, reproducibility and use of AI tools}
 All results were generated in a single recorded environment (Python 3.11.9, NumPy 1.26.4,
 scikit-learn 1.9.1, SciPy 1.12.0, pandas 3.0.6; exact versions in \texttt{requirements-lock.txt}). Every
 table and figure is generated programmatically from the released result files, and the code
-repository (Code availability) contains a script for each step, listed in Supplementary Note~1. AI
+repository (Code availability) contains a script for each step, listed in Supplementary Note~1. Regenerating every result in a second computing environment reproduced the SCM and IHDP results up to floating-point drift and changed no conclusion; on lending the fitted default model differs between library environments, so 4 of 42 single-$\alpha$ conclusions change category (none reverses) and we state lending results at the frontier level (Supplementary Note~2). AI
 assistants were used extensively in this project: to write and debug code (including the method
 implementation, baselines and environment fixes), to run experiments, to generate tables and figures
 from result files, and to draft text. Theorem~\ref{thm:floor} and its proof were produced with AI
@@ -432,7 +422,7 @@ assistance. The authors are responsible for verifying every claim, proof step an
 
 \section*{Results}
 
-\subsection*{The published method could not differ from its baseline}
+\subsection*{Our earlier method could not differ from its baseline}
 Chance already implements equation~(\ref{eq:obj}) under its own estimates, and NeuroSafe-CBO may
 replace Chance's pick only with an action at least as safe and $\varepsilon$ better in a context-mixed
 utility estimate. Over 9,500 post-warm-up decisions on the held-out SCM, the pool of permitted
@@ -447,8 +437,7 @@ and $(a,0)$ with the same target, which teaches $f(a,z)=f(a,0)$, that is, to ign
 method defined as an improvement operator over a reference policy, the operator's activation rate
 therefore belongs in the results table.
 
-\subsection*{Four benchmark defects}
-The same discipline applied to the evaluation environments found four defects (Table~\ref{tab:audit}).
+\subsection*{Four defects in the evaluation environments} The same discipline applied to the environments we had built or adapted to evaluate NeuroSafe-CBO found four defects in three environments (Table~\ref{tab:audit}).
 Three of them invalidate safety comparisons without producing any visible error: numbers are computed,
 confidence intervals are tight, and the conclusions are wrong. We fixed the two lending defects,
 replaced the inert IHDP harm, and removed the original MIMIC-IV formulation, in which observational
@@ -491,25 +480,16 @@ cases, Sheppard's formula at 20 values of $\rho$ (maximum error $0.0014$), Corol
 against seven policy families including randomised and feedback-adaptive ones (none falls below the
 floor), and Theorem~\ref{thm:floor} with autoregressive contexts, where a Bayes rule on the Kalman
 posterior makes $0.1763$ mistakes per round against a computed floor of $0.1750$. On the simulated
-Gaussian instance (Table~\ref{tab:floor}; Supplementary Fig.~S1) the Bayes rule matches
+Gaussian instance (Supplementary Table~S6; Supplementary Fig.~S1) the Bayes rule matches
 $\arccos(\rho)/\pi$ at every $\rho$ (largest discrepancy $0.004$). The per-decision
 $\alpha$-constrained Bayes rule keeps violations near $0.01$ and pays $0.18$--$0.47$, and our method,
 learning online for 600 rounds, keeps violations at $0.008$--$0.060$ but reaches $0.41$--$0.50$: it is
-correctly safe but substantially more conservative than the constrained optimum at this horizon.
+correctly safe but substantially more conservative than the constrained optimum at this horizon. Pricing violations at the budget's own rate, $\lambda=\Delta/0.15$ (Proposition~\ref{prop:alpha}), the $\alpha$-constrained Bayes rule meets the weighted floor to within the rounding of Supplementary Table~S6 (0.227 against 0.230 at $\rho=0.928$, 0.353 against 0.357 at $0.812$, 0.422 against 0.425 at $0.707$, and 0.489 against 0.490 at $0.5$). At that price the online learner beats always declining (0.501) only when the channel is informative ($\rho\ge0.812$); at $\rho\le0.707$ even the optimal rule is within 15\% of always declining, so there is little to gain, and the learner's exploration costs more than it earns.
 
-\begin{table}[t]
-\caption{\textbf{Theorem~\ref{thm:floor} on the Gaussian threshold instance ($\Delta=1$).} Entries
-are $(R_n+2V_n)/n$, with the violation rate in parentheses. Bayes rule and always-safe: 8 seeds of
-$n=2{,}000$; $\alpha$-constrained Bayes: $2\times10^5$ draws; learner: 8 seeds of $n=600$.
-``Always safe'' plays $a_0$.}
-\label{tab:floor}
-\centering\small
-\input{tables/floor.tex}
-\end{table}
+
 
 \subsection*{Frontiers across the three domains}
-Figure~\ref{fig:domains} shows every method's safety--utility frontier on the three domains. The
-picture differs sharply between them. On IHDP, where feasibility genuinely depends on the case, our
+Figure~\ref{fig:domains} shows every method's safety--utility frontier on the three domains.  On IHDP, where feasibility genuinely depends on the case, our
 frontier lies above and to the left of every baseline that operates at comparable violation. On the
 SCM, our frontier and Chance's meet except where the budget is tight. On lending, all learners lie far
 below the context oracle and below the best policy available to any agent that sees only the context
@@ -533,9 +513,7 @@ for the unconstrained UCB) and are omitted.}
 \subsection*{IHDP: improving both axes at once}
 Against Chance, NeuroSafe-Ctx improves both axes at Chance's two most conservative settings: $+1.615$
 return (95\% CI $+1.405$ to $+1.799$) with $-0.021$ violation ($-0.035$ to $-0.007$), and $+1.703$ with
-$-0.026$, all four intervals excluding zero (Table~\ref{tab:m-ihdp}). These are comparisons at
-operating points matched on tuning seeds, not at a common $\alpha$: the headline pairs our
-$\alpha=0.15$ with Chance's $\alpha=0.02$. Two features of the frontiers qualify them. First, Chance's
+$-0.026$, all four intervals excluding zero (Table~\ref{tab:m-ihdp}). These comparisons are matched on realised violation measured on tuning seeds: the headline pairs our $\alpha=0.15$ with Chance's $\alpha=0.02$ because Chance's realised violation at $\alpha=0.02$ is already $0.063$, above our $0.043$ at $\alpha=0.15$. Two features of the frontiers qualify them. First, Chance's
 realised violation is roughly two to three times its nominal level ($0.063$ at $\alpha=0.02$, $0.107$
 at $0.05$, $0.200$ at $0.10$) and never falls below $0.063$, so below that level the comparison is one
 of reachability rather than of return at equal violation. Second, NeuroSafe-Ctx finds no certified
@@ -549,7 +527,7 @@ Against reference SafeOpt the margin is larger: $+1.36$ to $+2.02$ return at all
 with lower violation at three (CIs excluding zero) and equal violation at the fourth, and our frontier
 is above it at all four comparable points. Against our own safe GP-UCB the result is a trade: that
 baseline earns $5.02$--$5.22$ against our $4.78$--$5.17$, more at four of six settings (CIs excluding
-zero), while our violation is lower at all six. The published NeuroSafe-CBO reaches $4.86$ at violation
+zero), while our violation is lower at all six. NeuroSafe-CBO reaches $4.86$ at violation
 $0.211$, and the context-observing oracle $4.79$ at $0.013$; our method exceeds the oracle's return for
 $\alpha\ge0.25$ only by spending more budget than the oracle's $\alpha=0.15$ rule allows.
 
@@ -610,8 +588,7 @@ method, and positive $\Delta$V means the full method violates more. Bold: CI exc
 \end{table}
 
 \subsection*{Ablation: context matters most, and mainly for safety}
-Table~\ref{tab:abl} contradicts an earlier version of this work, which claimed that all components were
-necessary. Context-conditional feasibility matters most on IHDP, and there mainly for safety: at
+Table~\ref{tab:abl} shows that two of the four components are unnecessary. Context-conditional feasibility matters most on IHDP, and there mainly for safety: at
 $\alpha=0.15$ the full method has higher return ($+0.609$, CI $+0.187$ to $+1.008$) and lower violation
 ($-0.098$, CI $-0.133$ to $-0.066$), and the two frontiers do not overlap, because the context-free
 variant's lowest violation ($0.126$) exceeds the full method's highest ($0.081$). This holds even though
@@ -654,59 +631,32 @@ $0.632$, and the MAP model $R^2=0.266$, on held-out stays (Supplementary Table~S
 the constraint offers a real choice (83\% of states) and changes the MAP-maximising dose in 21\% of
 states, at a cost of $0.59$\,mmHg when it does, but the best constrained policy improves on clinicians
 by only $0.21$\,mmHg, and even the unconstrained optimum by $0.34$\,mmHg, an upper bound because it
-maximises the model's own predictions (Table~\ref{tab:mimic-gate}). The gate fails at every $\alpha$,
+maximises the model's own predictions (Supplementary Table~S7). The gate fails at every $\alpha$,
 so we run no agent comparisons on MIMIC-IV and make no claim about our method there.
 
-\begin{table}[t]
-\caption{\textbf{MIMIC-IV gate, evaluated in the validated simulator.} Columns: share of states with at
-least two safe doses; share in which the MAP-maximising dose is unsafe; mean MAP lost when the
-constraint binds; improvement of the best constrained policy over clinicians. Thresholds fixed in
-advance: $\ge0.80$, $\ge0.10$ and $\ge0.5$\,mmHg.}
-\label{tab:mimic-gate}
-\centering\small
-\resizebox{\linewidth}{!}{\input{tables/mimic_gate.tex}}
-\end{table}
 
-\subsection*{MIMIC-IV: real-data confirmation and an exploratory finding}
+
+\subsection*{MIMIC-IV: real-data confirmation}
 Off-policy evaluation of the $\alpha=0.02$ policy on held-out stays (effective sample size 20\% of
 decisions) confirms the absence of headroom: $+0.046$\,mmHg, CI $-0.182$ to $+0.285$
 (Table~\ref{tab:mimic-ope}); the doubly robust estimate, $+0.42$, is probably biased upward by its
-outcome model and is also below the threshold. In an analysis that was not pre-registered, the same
-policy has a lower estimated arrhythmia rate than clinicians, $-0.0050$ (CI $-0.0078$ to $-0.0019$;
-about 28\% relative; doubly robust $-0.0030$, about 17\%). The sign holds at all nine combinations of
-softening and weight cap, although the interval includes zero at cap 50 for two of the three softening
-levels (Supplementary Table~S5). The policy achieves this mainly by using the highest dose bin in 4.1\%
-of decisions against the clinicians' 27.9\%. Because sicker patients receive higher doses and are at
-higher arrhythmia risk, and our covariates cannot rule out that confounding, we report this finding as
-hypothesis-generating only.
+outcome model and is also below the threshold. Because the simulator's harm model is weak (AUC $0.632$), the conclusion is scoped to this formulation and these covariates: no policy shows meaningful headroom here, which does not establish that context-conditional dosing cannot help. An exploratory comparison of arrhythmia rates, likely confounded by severity, is reported in Supplementary Note~3 and is not used for any conclusion.
 
 \begin{table}[t]
 \caption{\textbf{MIMIC-IV off-policy evaluation on held-out stays: constrained policy ($\alpha=0.02$)
-against clinicians.} Intervals resample stays; DR is the doubly robust estimate. The arrhythmia row is
-exploratory, not pre-registered.}
+against clinicians.} Intervals resample stays; DR is the doubly robust estimate. The arrhythmia row is exploratory and likely confounded by severity (Supplementary Note~3).}
 \label{tab:mimic-ope}
 \centering\small
 \resizebox{\linewidth}{!}{\input{tables/mimic_ope.tex}}
 \end{table}
 
-\subsection*{Reproducibility across computing environments}
-We regenerated every result in a single recorded environment and compared it with an earlier run in a
-different environment. On the SCM and IHDP every baseline, including reference SafeOpt, reproduces row
-for row; our method and its ablation variants show floating-point drift (largest per-setting mean shift
-$0.004$), no matched operating point or CI-based conclusion changes, and the IHDP headline moves from
-$+1.614$ to $+1.615$. Lending does not reproduce exactly: the input data are identical, but the fitted
-monotone default model differs between library environments (we release a checksum of its
-predictions). Across the two environments 4 of 42 lending conclusions change category, all from a CI
-excluding zero to one including it and none reversed, and the frontier-level conclusions are
-unchanged; we therefore state lending results at the frontier level (Supplementary Note~2).
+
 
 \section*{Limitations}
 
 \subsection*{Scale and realism of the benchmarks}
 The three method-comparison domains are small: one synthetic and two built on real covariates (1,000
-lending outcomes; IHDP), each with a one-dimensional observed context and a horizon of 200 rounds. A
-practitioner in credit or clinical decision support would regard both the context and the horizon as
-unrealistically simple: real decisions use many covariates, arrive over months or years, and face
+lending outcomes; IHDP), each with a one-dimensional observed context and a horizon of 200 rounds. Real credit and clinical decisions use many covariates, arrive over months or years, and face
 distribution shift that a single mid-horizon jump does not capture. Our conclusions are about the
 mechanism---when context-conditional feasibility can help---and not about deployable performance.
 
@@ -729,10 +679,7 @@ SafeOpt are large enough that this asymmetry cannot explain them, but the narrow
 affected.
 
 \subsection*{How safety is achieved at small budgets}
-At small $\alpha$ our method's safety comes largely from its fallback to the least-risky action (78--94\%
-of IHDP decisions at $\alpha\le0.05$), not from active optimisation, and its violation then exceeds the
-nominal level. A safety engineer would read the low-$\alpha$ end of our frontiers as the behaviour of a
-cautious default rather than evidence of efficient learning.
+At small $\alpha$ our method's safety comes largely from its fallback to the least-risky action (78--94\% of IHDP decisions at $\alpha\le0.05$), not from active optimisation. Its realised violation stays at or below the nominal level for every $\alpha\ge0.075$ in all three domains, but not below that: it exceeds $\alpha$ on IHDP for $\alpha\le0.03$, on the SCM at $\alpha=0.02$ and on lending for $\alpha\le0.05$. We therefore claim calibrated behaviour only for $\alpha\ge0.075$, and a safety engineer should read the low-$\alpha$ end of our frontiers as the behaviour of a cautious default rather than evidence of efficient learning.
 
 \subsection*{Clinical validity of the MIMIC-IV audit}
 A clinician would raise several objections to the MIMIC-IV domain, and we accept them. The simulator
@@ -758,10 +705,7 @@ not help on real lending data, where it ties the chance-constrained rule and is 
 both SafeOpt-style baselines. On a real clinical domain, a gate fixed in advance showed that there was
 nothing for any policy to gain over clinicians in blood pressure. Theorem~\ref{thm:floor} explains why
 gains of this kind are bounded: the information in the context channel, not the learning algorithm,
-sets a floor that every policy shares. Future work should test the mechanism with richer
-multi-dimensional contexts and longer horizons, derive an upper bound that matches the floor, extend the
-clinical audit to patient-centred outcomes with prospective validation, and adopt the benchmark reporting
-items recommended here as a standard.
+sets a floor that every policy shares. Future work should test the mechanism with richer contexts and longer horizons, and derive an upper bound that matches the floor.
 
 \section*{Data availability}
 The German Credit data are publicly available from the UCI Machine Learning Repository~\cite{hofmann1994}.
@@ -773,11 +717,10 @@ database are released. All other result files supporting the findings are availa
 repository.
 
 \section*{Code availability}
-All code, result files and scripts that regenerate every table and figure are available at \coderepo{}
-(archived release: \url{https://doi.org/10.5281/zenodo.23624021}). Supplementary Note~1 lists the commands in order.
+All code, result files and scripts that regenerate every table and figure are available at \coderepo{} (archived release: \url{https://doi.org/10.5281/zenodo.23624021}). Supplementary Note~1 lists the commands in order.
 
 
-{\small\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
+{\footnotesize\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}
 \begin{thebibliography}{99}
 \bibitem{sui2015safeopt} Sui, Y., Gotovos, A., Burdick, J. \& Krause, A. Safe exploration for optimization with Gaussian processes. In \emph{Proc. 32nd International Conference on Machine Learning} 997--1005 (PMLR, 2015).
 \bibitem{sui2018stageopt} Sui, Y., Zhuang, V., Burdick, J. \& Yue, Y. Stagewise safe Bayesian optimization with Gaussian processes. In \emph{Proc. 35th International Conference on Machine Learning} (PMLR, 2018).
@@ -798,17 +741,24 @@ All code, result files and scripts that regenerate every table and figure are av
 \bibitem{henderson2018} Henderson, P. \emph{et al.} Deep reinforcement learning that matters. In \emph{Proc. 32nd AAAI Conference on Artificial Intelligence} (2018).
 \bibitem{pineau2021} Pineau, J. \emph{et al.} Improving reproducibility in machine learning research. \emph{J. Mach. Learn. Res.} \textbf{22}, 1--20 (2021).
 \bibitem{gundersen2018} Gundersen, O. E. \& Kjensmo, S. State of the art: reproducibility in artificial intelligence. In \emph{Proc. 32nd AAAI Conference on Artificial Intelligence} (2018).
+\bibitem{neurosafecbo} Hasan, M. M. NeuroSafe-CBO: source code. \emph{GitHub} https://github.com/MahmudulHasanJoy/NeuroSafe-CBO \verify{(year; replace with the earlier paper or preprint if one exists)}.
+\bibitem{amani2020glm} Amani, S., Alizadeh, M. \& Thrampoulidis, C. Generalized linear bandits with safety constraints. In \emph{Proc. IEEE International Conference on Acoustics, Speech and Signal Processing} (2020).
 \bibitem{srinivas2010} Srinivas, N., Krause, A., Kakade, S. \& Seeger, M. Gaussian process optimization in the bandit setting: no regret and experimental design. In \emph{Proc. 27th International Conference on Machine Learning} 1015--1022 (2010).
 \bibitem{rasmussen2006} Rasmussen, C. E. \& Williams, C. K. I. \emph{Gaussian Processes for Machine Learning} (MIT Press, 2006).
 \bibitem{moradipari2021} Moradipari, A., Amani, S., Alizadeh, M. \& Thrampoulidis, C. Safe linear Thompson sampling with side information. \emph{IEEE Trans. Signal Process.} \textbf{69}, 3755--3767 (2021).
+\bibitem{liu2021} Liu, X., Li, B., Shi, P. \& Ying, L. An efficient pessimistic-optimistic algorithm for stochastic linear bandits with general constraints. In \emph{Advances in Neural Information Processing Systems 34} (2021).
 \bibitem{filippi2010} Filippi, S., Capp\'e, O., Garivier, A. \& Szepesv\'ari, C. Parametric bandits: the generalized linear case. In \emph{Advances in Neural Information Processing Systems 23} (2010).
 \bibitem{li2017glm} Li, L., Lu, Y. \& Zhou, D. Provably optimal algorithms for generalized linear contextual bandits. In \emph{Proc. 34th International Conference on Machine Learning} (PMLR, 2017).
+\bibitem{russac2021} Russac, Y., Faury, L., Capp\'e, O. \& Garivier, A. Self-concordant analysis of generalized linear bandits with forgetting. In \emph{Proc. 24th International Conference on Artificial Intelligence and Statistics} (PMLR, 2021).
+\bibitem{chen2022} Chen, T., Gangrade, A. \& Saligrama, V. Strategies for safe multi-armed bandits with logarithmic regret and risk. In \emph{Proc. 39th International Conference on Machine Learning} (PMLR, 2022).
 \bibitem{rigollet2010} Rigollet, P. \& Zeevi, A. Nonparametric bandits with covariates. In \emph{Proc. 23rd Conference on Learning Theory} (2010).
 \bibitem{russac2019} Russac, Y., Vernade, C. \& Capp\'e, O. Weighted linear bandits for non-stationary environments. In \emph{Advances in Neural Information Processing Systems 32} (2019).
 \bibitem{kalman1960} Kalman, R. E. A new approach to linear filtering and prediction problems. \emph{J. Basic Eng.} \textbf{82}, 35--45 (1960).
 \bibitem{rao1999} Rao, R. P. N. \& Ballard, D. H. Predictive coding in the visual cortex: a functional interpretation of some extra-classical receptive-field effects. \emph{Nat. Neurosci.} \textbf{2}, 79--87 (1999).
 \bibitem{lattimore2020} Lattimore, T. \& Szepesv\'ari, C. \emph{Bandit Algorithms} (Cambridge Univ. Press, 2020).
 \bibitem{sheppard1899} Sheppard, W. F. On the application of the theory of error to cases of normal distribution and normal correlation. \emph{Phil. Trans. R. Soc. A} \textbf{192}, 101--167 (1899).
+\bibitem{kirschner2019} Kirschner, J. \& Krause, A. Stochastic bandits with context distributions. In \emph{Advances in Neural Information Processing Systems 32} (2019).
+\bibitem{kim2023} Kim, J. \emph{et al.} Contextual linear bandits under noisy features: towards Bayesian oracles. In \emph{Proc. 26th International Conference on Artificial Intelligence and Statistics} (PMLR, 2023).
 \bibitem{hofmann1994} Hofmann, H. Statlog (German Credit Data). \emph{UCI Machine Learning Repository} https://doi.org/10.24432/C5NC77 (1994).
 \bibitem{goldberger2000} Goldberger, A. L. \emph{et al.} PhysioBank, PhysioToolkit, and PhysioNet: components of a new research resource for complex physiologic signals. \emph{Circulation} \textbf{101}, e215--e220 (2000).
 \bibitem{gottesman2019} Gottesman, O. \emph{et al.} Guidelines for reinforcement learning in healthcare. \emph{Nat. Med.} \textbf{25}, 16--18 (2019).
@@ -819,18 +769,14 @@ All code, result files and scripts that regenerate every table and figure are av
 \bibitem{thomas2015hcope} Thomas, P. S., Theocharous, G. \& Ghavamzadeh, M. High-confidence off-policy evaluation. In \emph{Proc. 29th AAAI Conference on Artificial Intelligence} (2015).
 \bibitem{thomas2016} Thomas, P. S. \& Brunskill, E. Data-efficient off-policy policy evaluation for reinforcement learning. In \emph{Proc. 33rd International Conference on Machine Learning} (PMLR, 2016).
 \bibitem{singer2016} Singer, M. \emph{et al.} The third international consensus definitions for sepsis and septic shock (Sepsis-3). \emph{JAMA} \textbf{315}, 801--810 (2016).
+\bibitem{physionet2025llm} PhysioNet. Use of MIMIC data with large language models and online services. https://physionet.org/news/post/llm-responsible-use/ (2025).
 \end{thebibliography}}
 
-\section*{Acknowledgements}
-\verify{Acknowledgements (optional): funding, computing resources, and the colleague who checked the proof of Theorem~1.}
+
 
 \section*{Author contributions}
-\verify{To be completed by the authors, e.g. M.H.J. and S.M.H. conceived the study; ... All authors reviewed the manuscript.}
-
-\section*{Competing interests}
-The authors declare no competing interests.\verify{}
+\verify{M.M.H. [role]. A.S. [role]. S.M.H. [role, e.g. carried out the MIMIC-IV audit]. All authors reviewed and approved the manuscript.}
 
 \section*{Additional information}
-\textbf{Supplementary information} accompanies this paper. \textbf{Correspondence} and requests for
-materials should be addressed to M.H.J.
+\textbf{Competing interests:} the authors declare no competing interests. \textbf{Correspondence} and requests for materials should be addressed to M.M.H.
 \end{document}

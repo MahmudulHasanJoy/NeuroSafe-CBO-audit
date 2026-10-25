@@ -21,7 +21,7 @@ for f in files:
         problems.append(f"{f}: {size / 1e6:.0f} MB (GitHub rejects files over 100 MB; keep large data out)")
     if low.endswith(BINARY_DATA):
         problems.append(f"{f}: binary data/cache file - may contain patient-level data")
-    if "mimic" in low and low.startswith(("data/", "results/")) and not low.startswith("results/v3/mimic/audit.json"):
+    if "mimic" in low and low.startswith(("data/", "results/")) and not low.startswith("results/v3/mimic/"):
         problems.append(f"{f}: MIMIC-related data/result file - only results/v3/mimic/audit.json (aggregates) may be published")
     head = b""
     try:

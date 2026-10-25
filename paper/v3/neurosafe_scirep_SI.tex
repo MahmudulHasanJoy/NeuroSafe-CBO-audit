@@ -13,7 +13,7 @@
 \setlength{\parskip}{3pt}
 \title{\large\bfseries Supplementary Information for\\[3pt]
 Context-conditional feasibility improves safe sequential decisions only as far as the observed context reveals harm}
-\author{Mahmudul Hasan Joy and Syed Mehedi Hussain}
+\author{Md. Mahmudul Hasan, Aurin Subah and Syed Mehedi Hussain}
 \date{}
 \begin{document}
 \maketitle
@@ -61,6 +61,17 @@ category: Chance at $\alpha=0.35$ ($\Delta V$ $-0.021\to-0.017$), reference Safe
 ($\Delta R$ $-0.001\to-0.000$) ablations at $\alpha=0.15$. All four moved from a CI excluding zero to
 one including it; none reversed sign. Frontier-level conclusions were unchanged.
 
+\section*{Supplementary Note 3: Exploratory comparison of arrhythmia rates (MIMIC-IV)}
+This analysis is not part of the gate and is not used for any conclusion in the main text. On held-out
+stays, the $\alpha=0.02$ policy has a lower estimated rate of new arrhythmia than clinicians: $-0.0050$
+(95\% CI $-0.0078$ to $-0.0019$, resampling stays; about 28\% relative; doubly robust estimate $-0.0030$,
+about 17\%). The sign holds at all nine combinations of softening and weight cap, although the interval
+includes zero at cap 50 for two of the three softening levels (Supplementary Table~S5). The policy
+achieves this mainly by using the highest dose bin in 4.1\% of decisions against the clinicians'
+27.9\%. Sicker patients receive higher doses and are at higher arrhythmia risk, and our covariates
+cannot rule out that confounding, so we regard this result as likely confounded by severity and as
+hypothesis-generating at most.
+
 \begin{table}[h]
 \caption{\textbf{Paired tests at operating points matched on tuning seeds, nonstationary SCM} (50
 held-out seeds). Bold: 95\% bootstrap CI excludes zero. Chance's frontier is flat for
@@ -97,6 +108,38 @@ stays. The original in-sample figures are shown for comparison and are not valid
 softening $\varepsilon$ and importance-weight cap. Intervals resample stays (2,000 replicates).}
 \centering\small
 \input{tables/mimic_sensitivity.tex}
+\end{table}
+
+\section*{Supplementary Note 4: Proofs of Corollary 1 and Proposition 1}
+\noindent\textbf{Corollary 1.} $(c_t,o_t)$ is independent of everything before round $t$, so
+$\mathbb P(c_t\le0\mid\mathcal G_t)=\mathbb P(c_t\le0\mid o_t)$, which exceeds $\tfrac12$ if and only if
+$o_t\le0$. The expected minimum in Theorem~1 is therefore
+$\mathbb P(\mathrm{sign}\,c_t\ne\mathrm{sign}\,o_t)$, which for a centred bivariate normal with
+correlation $\rho$ equals $\arccos(\rho)/\pi$ by Sheppard's formula. Apply
+Theorem~1.
+
+
+\noindent\textbf{Proposition 1.} Per round, declining when $c_t\le0$ adds $\Delta$ to $R_n$ and nothing to $V_n$; acting when $c_t>0$ adds $-\Delta$ to $R_n$ and $1$ to $V_n$. Conditional on $\mathcal G_t$ the expected weighted cost is therefore $\Delta\,\mathbb P(c_t\le0\mid\mathcal G_t)$ for $a_0$ and $(\lambda-\Delta)\,\mathbb P(c_t>0\mid\mathcal G_t)$ for $a_1$, and the smaller is chosen exactly when the stated threshold holds. Because $H_t=\mathbf 1\{c_t>0\}$, $\mathbb P(H_t>\tau\mid do(a_1),\mathcal G_t)=\mathbb P(c_t>0\mid\mathcal G_t)$ for $\tau\in[0,1)$. Under the Gaussian channel the posterior is $c_t\mid o_t\sim\mathcal N(\rho^2o_t,\sigma_c^2(1-\rho^2))$, and with $U=\rho o_t/\sigma_c\sim\mathcal N(0,1)$ this gives $\mathbb P(c_t>0\mid o_t)=\Phi(\kappa U)$.
+
+
+\begin{table}[h]
+\caption{\textbf{Theorem~1 on the Gaussian threshold instance ($\Delta=1$).} Entries
+are $(R_n+2V_n)/n$, with the violation rate in parentheses. Bayes rule and always-safe: 8 seeds of
+$n=2{,}000$; $\alpha$-constrained Bayes: $2\times10^5$ draws; learner: 8 seeds of $n=600$.
+``Always safe'' plays $a_0$.}
+
+\centering\small
+\input{tables/floor.tex}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{MIMIC-IV gate, evaluated in the validated simulator.} Columns: share of states with at
+least two safe doses; share in which the MAP-maximising dose is unsafe; mean MAP lost when the
+constraint binds; improvement of the best constrained policy over clinicians. Thresholds fixed in
+advance: $\ge0.80$, $\ge0.10$ and $\ge0.5$\,mmHg.}
+
+\centering\small
+\resizebox{\linewidth}{!}{\input{tables/mimic_gate.tex}}
 \end{table}
 
 \begin{figure}[h]

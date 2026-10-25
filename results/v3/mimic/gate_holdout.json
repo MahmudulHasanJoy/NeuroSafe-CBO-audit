@@ -1,0 +1,110 @@
+{
+  "fit_half": {
+    "n": 8000,
+    "unconstrained_headroom": 0.34199904416425203,
+    "gate": [
+      {
+        "alpha": 0.015,
+        "choice": 0.605375,
+        "binds": 0.417625,
+        "cost": 0.48629914559004944,
+        "headroom": 0.13890836348720767,
+        "passed": false
+      },
+      {
+        "alpha": 0.02,
+        "choice": 0.831,
+        "binds": 0.214,
+        "cost": 0.5945212135603264,
+        "headroom": 0.21477150446234225,
+        "passed": false
+      },
+      {
+        "alpha": 0.03,
+        "choice": 0.972625,
+        "binds": 0.045375,
+        "cost": 0.861628089586196,
+        "headroom": 0.3029026695992785,
+        "passed": false
+      },
+      {
+        "alpha": 0.05,
+        "choice": 0.99825,
+        "binds": 0.00425,
+        "cost": 1.1887331411020592,
+        "headroom": 0.33694692831456835,
+        "passed": false
+      },
+      {
+        "alpha": 0.075,
+        "choice": 0.999625,
+        "binds": 0.0005,
+        "cost": 2.1055598151736117,
+        "headroom": 0.3409462642566653,
+        "passed": false
+      },
+      {
+        "alpha": 0.1,
+        "choice": 1.0,
+        "binds": 0.000125,
+        "cost": 1.4466127172751158,
+        "headroom": 0.34181821757459274,
+        "passed": false
+      }
+    ]
+  },
+  "heldout_half": {
+    "n": 8000,
+    "unconstrained_headroom": 0.3437979864256088,
+    "gate": [
+      {
+        "alpha": 0.015,
+        "choice": 0.619125,
+        "binds": 0.4065,
+        "cost": 0.4999021870290156,
+        "headroom": 0.140587747398314,
+        "passed": false
+      },
+      {
+        "alpha": 0.02,
+        "choice": 0.823375,
+        "binds": 0.214375,
+        "cost": 0.6159582183660804,
+        "headroom": 0.21175194336338032,
+        "passed": false
+      },
+      {
+        "alpha": 0.03,
+        "choice": 0.961625,
+        "binds": 0.0555,
+        "cost": 0.895646746393843,
+        "headroom": 0.2940895920007505,
+        "passed": false
+      },
+      {
+        "alpha": 0.05,
+        "choice": 0.99575,
+        "binds": 0.008625,
+        "cost": 1.1674576118369115,
+        "headroom": 0.33372866452351546,
+        "passed": false
+      },
+      {
+        "alpha": 0.075,
+        "choice": 0.9995,
+        "binds": 0.001125,
+        "cost": 1.5764942234727555,
+        "headroom": 0.34202443042420194,
+        "passed": false
+      },
+      {
+        "alpha": 0.1,
+        "choice": 0.999875,
+        "binds": 0.00025,
+        "cost": 1.6638158849616502,
+        "headroom": 0.34338203245436844,
+        "passed": false
+      }
+    ]
+  }
+}
