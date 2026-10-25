@@ -31,7 +31,7 @@
 % ---------- column 3: evaluation
 \node[ev, right=14mm of kf.north east, anchor=north west] (sweep) {\textbf{Frontier sweeps}\\ Each method's own safety knob is swept; return against violation (Fig.~2).};
 \node[ev, below=of sweep] (match) {\textbf{Matched paired tests}\\ Operating points fixed on tuning seeds 0--9, tested on held-out seeds 100--149.};
-\node[ev, below=of match] (abl) {\textbf{Ablations and baselines}\\ Remove context, GLM, buckets or filter; compare with Chance, SafeOpt, safe GP-UCB and an oracle.};
+\node[ev, below=of match] (abl) {\textbf{Ablations and baselines}\\ Remove context, GLM, buckets or filter; compare with Chance, SafeOpt, safe GP-UCB, Safe UCB-GLM and an oracle.};
 \begin{scope}[on background layer]
 \node[draw=black!40, dashed, rounded corners=3pt, fit=(sweep)(match)(abl), inner sep=2.5mm] (evalbox) {};
 \end{scope}

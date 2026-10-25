@@ -23,7 +23,7 @@
 % % neurosafe_cbo/v3.py; \verify marks text the authors must supply or confirm.
 \newcommand{\verify}[1]{\textcolor{red}{#1$^{\dagger}$}}
 \newcommand{\chk}{\textcolor{red}{$^{\dagger}$}}
-\newcommand{\coderepo}{\url{https://github.com/MahmudulHasanJoy/NeuroSafe-CBO}}
+\newcommand{\coderepo}{\url{https://github.com/MahmudulHasanJoy/NeuroSafe-CBO-audit}}
 
 \title{\Large\bfseries Context-conditional feasibility improves safe sequential decisions\\ only as far as the observed context reveals harm}
 \author{Md. Mahmudul Hasan$^{1,*}$, Aurin Subah$^{1}$ and Syed Mehedi Hussain$^{1}$\\[4pt]
@@ -281,7 +281,7 @@ confidence bound on the harm probability is within the budget,
 \mathcal C_t=\Big\{a\in\mathcal A:\ \varsigma\big(\hat\theta_t^\top\varphi(a,\hat z_t)+\beta_h\|\varphi(a,\hat z_t)\|_{\Sigma_t}\big)\le\alpha\Big\},
 \label{eq:cert}
 \end{equation}
-with $\|x\|_\Sigma=\sqrt{x^\top\Sigma x}$. This replaces the published path, which estimated
+with $\|x\|_\Sigma=\sqrt{x^\top\Sigma x}$. This replaces the path of our earlier method, which estimated
 $\mathbb E[H]$ per cell and passed it through a Gaussian cumulative distribution function.
 
 \subsection*{Utility estimate}
@@ -415,9 +415,8 @@ replacements was non-empty on 0.44\% of decisions, and on held-out seeds the two
 and 1.695) and violation rates (0.048 and 0.049) coincide; no number of seeds can separate agents that
 act identically on 99.6\% of decisions. The context module also carried almost no context: under a
 single declared protocol (decoupled SCM, 30 seeds of 400 steps, uniform actions, absolute Pearson
-correlation with the latent confounder) the raw context observation scores 0.930, the published
-predictive-coding latent 0.013, and a Kalman filter 0.929, so the deficit was in the implementation,
-not the premise. Finally, the published update fitted the utility and harm models at both $(a,z_t)$
+correlation with the latent confounder) the raw context observation scores 0.930, our earlier predictive-coding latent 0.013, and a Kalman filter 0.929, so the deficit was in the implementation,
+not the premise. Finally, our earlier update fitted the utility and harm models at both $(a,z_t)$
 and $(a,0)$ with the same target, which teaches $f(a,z)=f(a,0)$, that is, to ignore context. For any
 method defined as an improvement operator over a reference policy, the operator's activation rate
 therefore belongs in the results table.

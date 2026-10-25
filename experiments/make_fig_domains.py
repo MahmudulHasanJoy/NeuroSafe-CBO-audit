@@ -20,7 +20,7 @@ STYLE = {  # agent -> (label, colour, marker, linestyle); colour-blind-safe, als
     "SafeGP": ("Safe GP-UCB", "#009E73", "^", ":"),
     "SafeOpt-ref": ("SafeOpt (reference)", "#CC79A7", "D", "-."),
 }
-POINTS = {"NeuroSafeCBO": ("Published NeuroSafe-CBO", "#555555", "X"), "Oracle": ("Context oracle", "#000000", "*")}
+POINTS = {"NeuroSafeCBO": ("NeuroSafe-CBO (earlier method)", "#555555", "X"), "Oracle": ("Context oracle", "#000000", "*")}
 # Lending channel ceiling: output of experiments/channel_ceiling.py in the regenerated environment
 # (alpha: return, violation). Update if that script is rerun.
 CEILING = [(0.0725, 0.0011), (0.0900, 0.0038), (0.1100, 0.0116), (0.1325, 0.0268), (0.1650, 0.0617), (0.1900, 0.0901)]
